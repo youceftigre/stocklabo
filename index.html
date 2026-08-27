@@ -19,6 +19,8 @@
             display: flex;
             justify-content: flex-end;
             align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
         .lang-switcher { display: flex; gap: 8px; }
         .lang-btn {
@@ -33,6 +35,24 @@
         }
         .lang-btn.active { background: white; color: #333; font-weight: bold; }
         .lang-btn:hover { background: rgba(255,255,255,0.3); }
+        .sync-bar {
+            background: rgba(0,0,0,0.2);
+            padding: 6px 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 13px;
+        }
+        .sync-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            background: #FFA500;
+        }
+        .cloud-actions { display: flex; gap: 6px; }
+        .cloud-actions .lang-btn { background: rgba(255,255,255,0.15); }
         .header {
             background: rgba(0,0,0,0.25);
             color: white;
@@ -413,29 +433,6 @@
             font-size: 13px;
             display: inline-block;
         }
-        .file-input-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-        }
-        .file-input-wrapper input[type=file] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            cursor: pointer;
-            width: 100%;
-            height: 100%;
-        }
-        .file-btn {
-            background: #4a5568;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            display: inline-block;
-        }
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -494,7 +491,7 @@
 <body>
     <div class="container">
         <div class="lang-bar">
-                        <div class="cloud-actions">
+            <div class="cloud-actions">
                 <button class="lang-btn" onclick="exportData()" title="تصدير نسخة احتياطية">📥 تصدير</button>
                 <button class="lang-btn" onclick="importData()" title="استيراد نسخة احتياطية">📤 استيراد</button>
                 <input type="file" id="importFile" style="display:none" accept=".json" onchange="handleImport(event)">
@@ -511,7 +508,7 @@
         </div>
         <div class="header">
             <div class="logo-container">
-                <img src="data:image/png;base64,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" alt="MAPA Logo" class="logo-img">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAioAAAIqCAMAAAA97pGBAAAAb1BMVEUAoef///8An+diw/AAo+eT1vTu+v5Rvu4grOoApei65fny+/6n3vf3/f5GuOwAnebH6vl0yfGi2fYys+zn9/1IsOrR7vvY8fvg9Pwqr+vO7fp9zfJZwO8RqOmR1fQ8tezA6Pm04viH0PNsx/Cl3fb6M8H1AAAPx0lEQVR4nO3daWOqPNeGYY2oWIdq9a0jzv//N75OtSRZKxDbvW/Yz3l8VMGByySEJDQaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+XGN+r25XbEH/bNIt6eZbKj6en9cS2nixLvf/EM4r6RPg7zPIwjdpgu5Ef7847rtmkxP6Str/dMeoT4a8w6bgfFZVj8yQ/0e03PeOkeIfpwt+uTQ1UOWY6bnYiopIcm8OW/FS34x/yzq74mE+GQlTKfyL8HdekxEQlOQ6jotJsvxftsvcmbVb6E+HvMMtxMyYqyfZSAkRFZd4r2udoRlSq756UiKhckxIXlaHSBs7tU9iKqFTMIynlo3K8H/2YqDQHBfvMxkSl8sx01YyJSnJsvhCV+TTYsDUncSuiUiW3Fm1EVG7tlPioNCfhc6CBuBFRqRCzXH0dl1JReSYlNiqHUF+wmc6JStUtv9sIZaLynZTYqMy6gWLlfSJuQ1Sqw+SSUioqx++XR0alGeqkT6ROFaJSIc8WbcmoJLmkREdlpV8zNDuhp5aoVIidlOKo5GqfF6Iy3Og10FHehKhUhJOUwqjYSYmOSnOgXjNMV8omRKUScuc+paLiJCU+KjO1Buoq9Q9RqQSrRVsmKm4lER0VtWslOWtbEJUKcGufoqgk3jWa+KislH0vhZEqRKUqhKQEo+In5YWo9HfyFtJIFaJSEVJSQlFx2ymvRUU58r195AaP7/AYpP0LY7W/d1V6Xy9sUktei7YgKlJSXonKXOrcN+JIlYKomCTddU/ri8lmtEyehys04F99LpuObrtat7rTrFHi0BuTTbut2yan7i5tKG9fvKPK81u04agItc9rUelLm5i2+notKiZtbffPgPXH2016Py5pd9TNy0czHdnP3c/HTGO6Hiye17UWh/UoKTjGJhlNDvPnn+eyye6+SWK/QXdaYkRxtX1fSy4XFTkpr0RFHLWidqpoUTHTrbfJeHI7Wq1hP685yh311sJ6cvhxfc6Mzm6bunNohcJiGpuBWwzOzrc3yub2O5zjZstUj5l+ysdlIU/sSZR/fV+5/heKytwfjm1agdcLUTHZUTxh2l/nDJ2cB62oODMJPt4vpVNbqvz6b0r7+/b13qTPO9v2TCN1djZQZkrVhdiivX1beUxjry2fnwzXSvEaikpz7UdFHqlyJ0SlO1bOlxaXgqXlPGZFxflcH+9mJxevl32tlbHA2VFpWA0PqcmcDNc8KmaplCmzllhIJFpS1AvFblT6+X+zP2plmR+p0nfezI/KSe2DaXYmkVHp6vsanlPp50gDuT6k/1ZU9DJFToo8OjqUFC8qq/xf1xu1YvIjVWZ7Z1svKie1C+ai0904j4Si0pbmqH07+FkxS2WsxN3Z7UqsdVQCtY9cpiiXfANJ8aLydswf3q3z6t4h/9uunfaEExUTTMqlKbR2HghF5RCq+a7PuxWsSfUOoKuh2/Cpc1TMTqt95Caq1qIdrgNv4kZlb73pp/3zmV0+HOtWsAIKtoBv3OdDURmGY+ePxeoVZKvp7rDGUVHPfZQyJbpFe+NGZZzkf2Jn1IpVbM12bqlhRUUNui4UlUJ9u51vjkXZctU3Kr/Wog2VKUJUzClfctijVtJ8Q2bvXQ2yopIU/at9P4pKc2Ud6l309rWNSmyLVul5C7ZTrvxSxTrJ6eR/P2ONVNm+h6Ji3NqphJ9FxaqCskP05nWNSnSLVktKuEwRotKzJ/nk19qwRqp0dsGoBK4qqn4Ylfn3YCyjDr/S1TQqsS3a3ist2hs/KmaTfyi31opZ5s8ZPi9nzoGouCfC94+zOpzbH4OVchzLROXzuoc3eR7S9rl9Jga1sx+022dl45pGJT4pSjtlUngJTIhKZtVAuV5zKxpHEypVpEU1+oPNstcwjWS52Yq9qIVR6Zxbt4vJ2a51EL7x+HmwpQWGPo/dNDHXjU/SxvWMin7u86st2huhAko+8g+0n2lL8n/VzjQYlZ1/rD5b2denN43dQfi8RVEZb3rPcSfZyS8c+l8/jzCmc9iefo0+MCadCP15dYxKdIs2ujc/R4iKPc762bVij1R56zUCURE6A8fWjHmTfXivKIrKYWntQbgk9PF4QerFqH+yrj+brl+s1TAqsS1atTe/RJkiR8WqgZ5/VZN/n+GkEYpKzzuMK6fn3QhdZOGo7DNnDzsvEI8ayO/8Gx7dKxR+VuoXlch2ilFbtGXWiZSjklg97ofHK7P855pdyohAVJbugeiP3A9vUu97BqOy8Nbx8BPRue/BeCWWP6npfV373trfS0q5QV1SVMwu/8hj1IqxRpAcesFSZeM2VaRRT+5wlXDHvj8gQmiSPEpA9/xn4QXV6U68qltU9JFMsb35Jd9QioqzKNPxvoigVWFciyw9Kl4vz0w4VnY9dxWKymop7GHkFiv31plXXn1Ifxv309ctKrE9bz9NihwVY7VK326jVqw1VRbXkiYQFbcdspcGI3qBCo5Xkb6/1yQ6XzNhRs75TV88HXBHNdQrKrFXCBsv97w9yVGxHu1cqz5jVReD66EPRMU9hFux8hw5rwpEpXMSfwD3ROs2FsvuQ7z4FJcrc/uTaxUVoU1/J5bfP27R3ohRcXrQrhGwL6rcJqkGouKUjfLfurF03jsQFWGY79XI+QS30strse7F8ZTuCX2doqK3aJWkCF0TVzFJUaLybv2Mn6nTqXI/cHpU3MaC1Kxs+FVAICor+TgunU9wuwzkReUgbus2q2sUFbVMiW3RxiRFiYpT3Xedov7WJAhExV0rTikT3JOQQFTG8syL1DnTWohR+ZC/+sZ+WX2iEnvuo7Vo+0o7RRnULkfFqYHOiTX9Z3hvOPw4Ktbwy2YwKnv51L9cVJSpbHWNSvSog7gWrVl35fdVomKsn3uWWo2CxX222s9LFefP8adKFaUCqmlUYlu06swwpfaZDLWbvChRsY728GSd/R7uHS16VDInAx25WRvTVpEXBnJXpbv17JeMSuKMAq9JVP5wiza5HNSSE1EfUWkkh/yj8/y/91H/RJwBNdfSrUDsTuFmMCpKw9idSXTrAvLG0chFktvXW4+oqElZKL35H0o7RUtKv/Sc5a+oBObwLB7/8EBU3NEqYgead6ADUZH69YWe/cG9V8i5AiXnLHPyXI+oKKtLqy1aLSni73mpffrlp7c/o6IvzvRVngei4hZ6Yv3h9ekG5wFJ7VpvsMGtY9/s3I/uXle+cQdq1yEqf7pFe01KfFSUdfS/659QVNyZFUOps9W7/ByKini11Cv57uvXueVFcy+lwP0VaxCVyBatvtaBXPs8au74qLg9oV/mXz9p4MqyN2n+U2gueONsgoMQ/HEExrs4/DXUwb2yPJx4bSW/6Kl+VKJ785UFHvvyKU7yOJ7xUXGnf395XqYNRMWfYHz0Joq6V2oKojL0z6K8/8znY8Eeb9kq/6Y1bp9ODaKi99HKLdpMaacoJ8PJ17zi+Kgoi45+L9QSGgXnjcJ2l4CSehzDo+C8v87Ee8mj5BFSOHbGMAgdmFWPina/FLVFe45q0T6T8kJUTFd8p2f9E4pKw7+3x2zSy3/ErrBYSsHY2sUmNz7WJGtvyOPzNMkfW9vc5xe5MpkwyLTiUdHPkuNatOq5T/RNXr6jIv3gzfwI/kBUzNIfsT887+7rSxpjUv84N4tH7He2zz00dkKZ96xmpJ9pPknfHxsn3YPw7tWOyu/10YpJyfdFvRAVI43vHn7Xi8F5QNLBmA3Wo2m23J3O8h+keMrYYjAZpdmyu/YWeLs6PyePeMPjrlbt0yhNp5v1QZglVPGo6O2U32nR5ju4X4mKN0K2afWQBCeiKudPs8VqPtM690pNRJ3NP+fyc4vvK03KihnDy8YL9f4TFY5KbItW7c0/iZddE2ulnBei0pAWs9l+v1cwKvaFgXJ+OGc5P4J2JBYcQVWOitqiVWabqn204t7tpLwUFWGGUa7+CUdFLJIK/Cwqi/xCk1oBHFDdqESWKeoNM7TxKc7qW69ERZhXlb/yFoyKOu434GdRsXogzfTfWV8luvaJbNG6F+JfKlUyr3skP546HBW/L7XQj6LiXCTyLi8XqmpUzOiPtmgb3ty5l6LijYi3rsQUkCreHAvX0G0KhaLSKYiOO9FVHSX49FmPeUCxScl+cO5z91pU3HsvWM8WRKXR2Oh3brg6B1fDdq/7ustROh/MH2eXhbOy2NRjHlBsi1ZLijI+xV0ltPlqVNw5We38ZbfCqISz8pZGLXGs3bH3/qmFEZnqNZCb4aQWSxz/WotWuWeckJQXo+JUZHbPYHFUzEi/ecNh+R63GnZ60HY1FBY4vupt1bOwziSpQ1Rie95i+2j92qf5clTsMSUr68niqFzatme5jdHfZiZmFNx1jf1kq3S9rbV7d5iuct3ks2vqsMZ+ohXL2sSqg/xypZ3SU5bE1oZhO4fbTkPDWE1POwvv7jVBcRLFSAjL8O02fyCmrfJxrfpGA/9fsGiL00wfHz9dC+Xa4ngthdw7dxyqF5Xs9NEWyUlp7ORXt5ViIj3KL1fuhLI7vOXt207Pbyv35MHeh+na274pbezu1jrZGC7Oj6W+Rnv7vfMXf8WomGxzXuT31d8fRwWLgywnA+tKwnC8vn+NbGC9/X5dwfsB9RLZ77xcebX68tTm/l7W885OegXbPphkulmfx5+zfn/2+dZu7b6WX3K3z+9ejMq112DX2r59Lvr9xWVXk1FaeEe6S01z2WSwmnf6/fnqvN4sH5t437z2dxn7J5hGL0uX0+nyckDK3SVQicptAMJzV2XuXHjbJLmk8rJNmvZKboL/VsytJNWoxO/quQkp+ScVRAX4QlRQElFBSUQFJREVlERUUBJRQUlEBSURFZREVFASUUFJRAUlERWURFRQElFBSa0+UUEpblTORAWy3v/ZKjhGGpVh8v7rDwMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPCf+n/cEewbwyCLJgAAAABJRU5ErkJggg==" alt="MAPA Logo" class="logo-img">
             </div>
             <div class="company-name">MAPA İNŞAAT ve TİCARET A.Ş.</div>
             <h1 id="appTitle">📦 مخزن الأقلام والأوراق</h1>
@@ -694,14 +691,14 @@
         </div>
     </div>
 
-        <script type="module">
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, doc, setDoc, onSnapshot, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // =========================================================
         // 🔧 FIREBASE CONFIG — استبدل هذه القيم بمشروعك
         // =========================================================
-       const firebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyB6N4gQY_9dffcphohdqIrv74LMiIjcc08",
             authDomain: "stock-86f10.firebaseapp.com",
             databaseURL: "https://stock-86f10-default-rtdb.europe-west1.firebasedatabase.app",
@@ -713,6 +710,19 @@
         };
         // =========================================================
 
+        // ---- البيانات الافتراضية ----
+        const defaultOffice = {
+            'أقلام رصاص': { qty: 0, unit: 'عدد', borrowed: 0, section: 'office', ar: 'أقلام رصاص', fr: 'Crayons', en: 'Pencils', img: '' },
+            'أقلام جل أزرق': { qty: 0, unit: 'عدد', borrowed: 0, section: 'office', ar: 'أقلام جل أزرق', fr: 'Stylos gel bleu', en: 'Blue gel pens', img: '' },
+            'أقلام جل أسود': { qty: 0, unit: 'عدد', borrowed: 0, section: 'office', ar: 'أقلام جل أسود', fr: 'Stylos gel noir', en: 'Black gel pens', img: '' },
+            'أقلام تلوين': { qty: 0, unit: 'مجموعة', borrowed: 0, section: 'office', ar: 'أقلام تلوين', fr: 'Crayons de couleur', en: 'Coloring pens', img: '' },
+            'دفاتر A4': { qty: 0, unit: 'ورقة', borrowed: 0, section: 'office', ar: 'دفاتر A4', fr: 'Cahiers A4', en: 'A4 Notebooks', img: '' },
+            'ورق طباعة بيضاء': { qty: 0, unit: 'ورقة', borrowed: 0, section: 'office', ar: 'ورق طباعة بيضاء', fr: 'Papier blanc', en: 'White paper', img: '' },
+            'ورق ملون': { qty: 0, unit: 'ورقة', borrowed: 0, section: 'office', ar: 'ورق ملون', fr: 'Papier coloré', en: 'Colored paper', img: '' },
+            'مسطرة': { qty: 0, unit: 'عدد', borrowed: 0, section: 'office', ar: 'مسطرة', fr: 'Règle', en: 'Ruler', img: '' },
+            'ممحاة': { qty: 0, unit: 'عدد', borrowed: 0, section: 'office', ar: 'ممحاة', fr: 'Gomme', en: 'Eraser', img: '' }
+        };
+
         let app, db, cloudEnabled = false;
         try {
             if (firebaseConfig.apiKey && firebaseConfig.apiKey.length > 10) {
@@ -720,9 +730,7 @@
                 db = getFirestore(app);
                 cloudEnabled = true;
             }
-        } catch (e) {
-            console.warn("Firebase init failed:", e);
-        }
+        } catch (e) { console.warn("Firebase init failed:", e); }
 
         const translations = {
             ar: {
@@ -808,24 +816,14 @@
             }
         };
 
+        // ---- المتغيرات العامة ----
         let currentLang = 'ar';
         let inventory = {};
         let history = [];
         let currentType = 'out';
         let isSyncing = false;
 
-        const defaultOffice = {
-            'أقلام رصاص': { qty: 0, unit: 'عدد', borrowed: 0, section: 'office', ar: 'أقلام رصاص', fr: 'Crayons', en: 'Pencils', img: '' },
-            'أقلام جل أزرق': { qty: 0, unit: 'عدد', borrowed: 0, section: 'office', ar: 'أقلام جل أزرق', fr: 'Stylos gel bleu', en: 'Blue gel pens', img: '' },
-            'أقلام جل أسود': { qty: 0, unit: 'عدد', borrowed: 0, section: 'office', ar: 'أقلام جل أسود', fr: 'Stylos gel noir', en: 'Black gel pens', img: '' },
-            'أقلام تلوين': { qty: 0, unit: 'مجموعة', borrowed: 0, section: 'office', ar: 'أقلام تلوين', fr: 'Crayons de couleur', en: 'Coloring pens', img: '' },
-            'دفاتر A4': { qty: 0, unit: 'ورقة', borrowed: 0, section: 'office', ar: 'دفاتر A4', fr: 'Cahiers A4', en: 'A4 Notebooks', img: '' },
-            'ورق طباعة بيضاء': { qty: 0, unit: 'ورقة', borrowed: 0, section: 'office', ar: 'ورق طباعة بيضاء', fr: 'Papier blanc', en: 'White paper', img: '' },
-            'ورق ملون': { qty: 0, unit: 'ورقة', borrowed: 0, section: 'office', ar: 'ورق ملون', fr: 'Papier coloré', en: 'Colored paper', img: '' },
-            'مسطرة': { qty: 0, unit: 'عدد', borrowed: 0, section: 'office', ar: 'مسطرة', fr: 'Règle', en: 'Ruler', img: '' },
-            'ممحاة': { qty: 0, unit: 'عدد', borrowed: 0, section: 'office', ar: 'ممحاة', fr: 'Gomme', en: 'Eraser', img: '' }
-        };
-
+        // ---- وظائف التزامن ----
         function updateSyncStatus(status, color) {
             const dot = document.getElementById('syncDot');
             const text = document.getElementById('syncText');
@@ -865,7 +863,9 @@
                 const snap = await getDoc(doc(db, "warehouse", "data"));
                 if (snap.exists()) {
                     const data = snap.data();
-                    if (data.inventory) inventory = data.inventory;
+                    if (data.inventory && Object.keys(data.inventory).length > 0) {
+                        inventory = data.inventory;
+                    }
                     if (data.history) history = data.history;
                     localStorage.setItem('inventory', JSON.stringify(inventory));
                     localStorage.setItem('history', JSON.stringify(history));
@@ -879,48 +879,143 @@
             return false;
         }
 
-        // Real-time listener
-        if (cloudEnabled && db) {
-            onSnapshot(doc(db, "warehouse", "data"), (snap) => {
-                if (snap.exists() && !isSyncing) {
-                    const data = snap.data();
-                    if (data.inventory) inventory = data.inventory;
-                    if (data.history) history = data.history;
-                    localStorage.setItem('inventory', JSON.stringify(inventory));
-                    localStorage.setItem('history', JSON.stringify(history));
-                    updateMaterialOptions();
-                    updateUI();
-                    updateSyncStatus('online', '#51CF66');
-                }
-            }, (err) => {
-                console.error("Snapshot error:", err);
-                updateSyncStatus('offline', '#FFA500');
+        // ---- وظائف UI ----
+        function updateMaterialOptions() {
+            const select = document.getElementById('material');
+            select.innerHTML = '';
+            Object.keys(inventory).forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                select.appendChild(opt);
             });
         }
 
-        window.addEventListener('load', async function() {
-            const saved = localStorage.getItem('inventory');
-            inventory = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(defaultOffice));
-            const savedHistory = localStorage.getItem('history');
-            if (savedHistory) history = JSON.parse(savedHistory);
+        function getColor(qty) {
+            if (qty < 0) return '#FF6B6B';
+            if (qty < 10) return '#FFA500';
+            if (qty < 50) return '#FFD700';
+            return '#51CF66';
+        }
 
-            if (cloudEnabled) {
-                const loaded = await loadFromCloud();
-                if (!loaded && !saved) {
-                    inventory = JSON.parse(JSON.stringify(defaultOffice));
-                }
+        function getStatus(qty) {
+            const t = translations[currentLang];
+            if (qty < 0) return t.statusMissing;
+            if (qty < 10) return t.statusLow;
+            if (qty < 50) return t.statusMed;
+            return t.statusOK;
+        }
+
+        function getName(item, key) {
+            if (currentLang === 'ar' && item.ar) return item.ar;
+            if (currentLang === 'en' && item.en) return item.en;
+            if (currentLang === 'fr' && item.fr) return item.fr;
+            return key;
+        }
+
+        function getImgHtml(item) {
+            if (item.img) return '<img src="' + item.img + '" class="item-img" alt="">';
+            return '<div class="empty-img">🖼️</div>';
+        }
+
+        function getImgSmall(item) {
+            if (item.img) return '<img src="' + item.img + '" alt="">';
+            return '<div style="width:50px;height:50px;border-radius:6px;border:1px solid #ddd;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:20px;">🖼️</div>';
+        }
+
+        function updateUI() {
+            const t = translations[currentLang];
+            const totalQty = Object.values(inventory).reduce((sum, item) => sum + item.qty, 0);
+            const lowStock = Object.values(inventory).filter(item => item.qty < 10 && item.qty >= 0).length;
+
+            // عرض الأرقام الغربية (0-9) مباشرة
+            document.getElementById('totalQty').textContent = totalQty;
+            document.getElementById('lowStock').textContent = lowStock;
+            document.getElementById('totalItems').textContent = Object.keys(inventory).length;
+            document.getElementById('totalOps').textContent = history.length;
+
+            // Dashboard grid
+            const dashboardGrid = document.getElementById('dashboardGrid');
+            dashboardGrid.innerHTML = '';
+            Object.entries(inventory).forEach(([name, item]) => {
+                const div = document.createElement('div');
+                div.className = 'inventory-item';
+                div.style.borderColor = getColor(item.qty);
+                div.innerHTML = getImgHtml(item) +
+                    '<div class="inventory-item-name">' + getName(item, name) + '</div>' +
+                    '<div class="inventory-item-qty" style="color:' + getColor(item.qty) + '">' + item.qty + '</div>' +
+                    '<div class="inventory-item-status">' + getStatus(item.qty) + '</div>' +
+                    (item.borrowed > 0 ? '<div class="inventory-item-borrowed">' + t.borrowedLabel + ': ' + item.borrowed + '</div>' : '');
+                dashboardGrid.appendChild(div);
+            });
+
+            // Alerts
+            const alertBox = document.getElementById('alertBox');
+            const allItems = Object.entries(inventory).map(([name, item]) => ({...item, name}));
+            if (allItems.length > 0) {
+                let html = '<div class="alert"><h3>' + t.alertTitle + '</h3>';
+                allItems.forEach(item => {
+                    const color = item.qty <= 0 ? '#DC2626' : '#16A34A';
+                    const icon = item.qty <= 0 ? '❌' : '⚠️';
+                    html += '<div class="alert-item" style="color:' + color + '; font-weight:bold;">' + icon + ' <strong>' + getName(item, item.name) + '</strong> : ' + item.qty + ' ' + item.unit + '</div>';
+                });
+                html += '</div>';
+                alertBox.innerHTML = html;
             } else {
-                updateSyncStatus('offline', '#FFA500');
+                alertBox.innerHTML = '';
             }
 
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('date').value = today;
-            updateMaterialOptions();
-            updateUI();
-            updateTime();
-            setInterval(updateTime, 1000);
-        });
+            // Inventory table
+            const tableBody = document.getElementById('inventoryTable');
+            tableBody.innerHTML = '';
+            Object.entries(inventory).forEach(([name, item], idx) => {
+                const row = document.createElement('tr');
+                row.style.background = idx % 2 === 0 ? '#FAFAFA' : 'white';
+                row.innerHTML = '<td>' + getName(item, name) + '</td>' +
+                    '<td style="text-align:center;font-weight:bold;color:' + getColor(item.qty) + '">' + item.qty + '</td>' +
+                    '<td style="text-align:center;font-size:12px">' + getStatus(item.qty) + '</td>' +
+                    '<td style="text-align:center;color:#F59E0B">' + (item.borrowed > 0 ? item.borrowed : '-') + '</td>';
+                tableBody.appendChild(row);
+            });
 
+            // History
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            if (history.length === 0) {
+                historyList.innerHTML = '<p style="text-align:center;color:#999;font-size:14px;">' + t.noHistory + '</p>';
+            } else {
+                [...history].reverse().forEach(entry => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item ' + (entry.qty > 0 ? 'in' : 'out');
+                    const sectionBadge = '<span class="section-badge badge-office" style="font-size:10px">Office</span>';
+                    div.innerHTML = '<div class="history-item-left">' + sectionBadge +
+                        '<div class="history-item-name">' + entry.material + '</div>' +
+                        '<div class="history-item-employee">👤 ' + entry.employee + '</div></div>' +
+                        '<div class="history-item-right">' +
+                        '<div class="history-item-qty" style="color:' + (entry.qty > 0 ? '#51CF66' : '#FF6B6B') + '">' + (entry.qty > 0 ? '+' : '') + entry.qty + ' ' + (entry.type === 'in' ? '📥' : '📤') + '</div>' +
+                        '<div class="history-item-date">📅 ' + entry.date + '</div></div>';
+                    historyList.appendChild(div);
+                });
+            }
+
+            // Manage list
+            const officeList = document.getElementById('officeMaterialsList');
+            officeList.innerHTML = '';
+            Object.entries(inventory).forEach(([name, item]) => {
+                const div = document.createElement('div');
+                div.className = 'material-row';
+                div.innerHTML = getImgSmall(item) +
+                    '<input type="text" value="' + (item.ar || name) + '" readonly style="background:#f0f0f0;">' +
+                    '<input type="text" value="' + (item.fr || name) + '" readonly style="background:#f0f0f0;">' +
+                    '<input type="text" value="' + (item.en || name) + '" readonly style="background:#f0f0f0;">' +
+                    '<input type="text" value="' + item.unit + '" readonly style="background:#f0f0f0;width:60px;">' +
+                    '<button class="btn-secondary" onclick="openEditModal(&quot;' + name + '&quot;, &quot;office&quot;)">' + t.btnEdit + '</button>' +
+                    '<button class="btn-danger" onclick="deleteMaterial(&quot;' + name + '&quot;, &quot;office&quot;)">' + t.btnDelete + '</button>';
+                officeList.appendChild(div);
+            });
+        }
+
+        // ---- وظائف الإدارة ----
         function setLang(lang) {
             currentLang = lang;
             document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
@@ -934,6 +1029,39 @@
             });
             document.getElementById('appTitle').textContent = t.appTitle;
             document.getElementById('appSubtitle').textContent = t.appSubtitle;
+            updateUI();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            if (window.event) window.event.target.classList.add('active');
+        }
+
+        function setType(type) {
+            currentType = type;
+            const btns = document.querySelectorAll('#register .type-btn');
+            btns.forEach(btn => btn.classList.remove('active-out', 'active-in'));
+            if (type === 'out') btns[0].classList.add('active-out');
+            else btns[1].classList.add('active-in');
+        }
+
+        async function submitForm(e) {
+            e.preventDefault();
+            const material = document.getElementById('material').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const employee = document.getElementById('employee').value;
+            const date = document.getElementById('date').value;
+            if (!quantity || !employee) return;
+            if (currentType === 'out') inventory[material].qty -= quantity;
+            else inventory[material].qty += quantity;
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            history.push({ id: Date.now(), material, qty: currentType === 'out' ? -quantity : quantity, employee, date, type: currentType, section: 'office' });
+            localStorage.setItem('history', JSON.stringify(history));
+            await syncToCloud();
+            document.getElementById('quantity').value = '';
+            document.getElementById('employee').value = '';
             updateUI();
         }
 
@@ -1016,25 +1144,22 @@
             const previewImg = document.getElementById('editPreview');
             const newImg = (previewImg.style.display !== 'none' && previewImg.src && !previewImg.src.includes(window.location.href)) ? previewImg.src : undefined;
             if (!inventory[oldKey]) return;
-            const processSave = async (imgData) => {
-                const newKey = ar || fr || en || oldKey;
-                if (newKey !== oldKey) {
-                    inventory[newKey] = { ...inventory[oldKey], ar, fr, en, unit };
-                    if (imgData !== undefined) inventory[newKey].img = imgData;
-                    delete inventory[oldKey];
-                    history.forEach(h => { if (h.material === oldKey) h.material = newKey; });
-                } else {
-                    inventory[oldKey].ar = ar; inventory[oldKey].fr = fr; inventory[oldKey].en = en; inventory[oldKey].unit = unit;
-                    if (imgData !== undefined) inventory[oldKey].img = imgData;
-                }
-                localStorage.setItem('inventory', JSON.stringify(inventory));
-                localStorage.setItem('history', JSON.stringify(history));
-                await syncToCloud();
-                closeModal();
-                updateMaterialOptions();
-                updateUI();
-            };
-            await processSave(newImg);
+            const newKey = ar || fr || en || oldKey;
+            if (newKey !== oldKey) {
+                inventory[newKey] = { ...inventory[oldKey], ar, fr, en, unit };
+                if (newImg !== undefined) inventory[newKey].img = newImg;
+                delete inventory[oldKey];
+                history.forEach(h => { if (h.material === oldKey) h.material = newKey; });
+            } else {
+                inventory[oldKey].ar = ar; inventory[oldKey].fr = fr; inventory[oldKey].en = en; inventory[oldKey].unit = unit;
+                if (newImg !== undefined) inventory[oldKey].img = newImg;
+            }
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            localStorage.setItem('history', JSON.stringify(history));
+            await syncToCloud();
+            closeModal();
+            updateMaterialOptions();
+            updateUI();
         }
 
         async function deleteMaterial(key, section) {
@@ -1042,178 +1167,13 @@
             if (!confirm(t.confirmDelete)) return;
             delete inventory[key];
             localStorage.setItem('inventory', JSON.stringify(inventory));
-            history = history.filter(h => !(h.material === key));
+            history = history.filter(h => h.material !== key);
             localStorage.setItem('history', JSON.stringify(history));
             await syncToCloud();
             updateMaterialOptions();
             updateUI();
         }
 
-        function updateMaterialOptions() {
-            const select = document.getElementById('material');
-            select.innerHTML = '';
-            Object.keys(inventory).forEach(name => {
-                const opt = document.createElement('option');
-                opt.value = name; opt.textContent = name; select.appendChild(opt);
-            });
-        }
-
-        function setType(type) {
-            currentType = type;
-            const btns = document.querySelectorAll('#register .type-btn');
-            btns.forEach(btn => btn.classList.remove('active-out', 'active-in'));
-            if (type === 'out') btns[0].classList.add('active-out');
-            else btns[1].classList.add('active-in');
-        }
-
-        async function submitForm(e) {
-            e.preventDefault();
-            const material = document.getElementById('material').value;
-            const quantity = parseInt(document.getElementById('quantity').value);
-            const employee = document.getElementById('employee').value;
-            const date = document.getElementById('date').value;
-            if (!quantity || !employee) return;
-            if (currentType === 'out') inventory[material].qty -= quantity;
-            else inventory[material].qty += quantity;
-            localStorage.setItem('inventory', JSON.stringify(inventory));
-            history.push({ id: Date.now(), material, qty: currentType === 'out' ? -quantity : quantity, employee, date, type: currentType, section: 'office' });
-            localStorage.setItem('history', JSON.stringify(history));
-            await syncToCloud();
-            document.getElementById('quantity').value = '';
-            document.getElementById('employee').value = '';
-            updateUI();
-        }
-
-        function getColor(qty) {
-            if (qty < 0) return '#FF6B6B';
-            if (qty < 10) return '#FFA500';
-            if (qty < 50) return '#FFD700';
-            return '#51CF66';
-        }
-
-        function getStatus(qty) {
-            const t = translations[currentLang];
-            if (qty < 0) return t.statusMissing;
-            if (qty < 10) return t.statusLow;
-            if (qty < 50) return t.statusMed;
-            return t.statusOK;
-        }
-
-        function getName(item, key) {
-            if (currentLang === 'ar' && item.ar) return item.ar;
-            if (currentLang === 'en' && item.en) return item.en;
-            if (currentLang === 'fr' && item.fr) return item.fr;
-            return key;
-        }
-
-        function getImgHtml(item) {
-            if (item.img) return '<img src="' + item.img + '" class="item-img" alt="">';
-            return '<div class="empty-img">🖼️</div>';
-        }
-
-        function getImgSmall(item) {
-            if (item.img) return '<img src="' + item.img + '" alt="">';
-            return '<div style="width:50px;height:50px;border-radius:6px;border:1px solid #ddd;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:20px;">🖼️</div>';
-        }
-
-        function updateUI() {
-            const t = translations[currentLang];
-            const totalQty = Object.values(inventory).reduce((sum, item) => sum + item.qty, 0);
-            const lowStock = Object.values(inventory).filter(item => item.qty < 10 && item.qty >= 0).length;
-
-            document.getElementById('totalQty').textContent = totalQty;
-            document.getElementById('lowStock').textContent = lowStock;
-            document.getElementById('totalItems').textContent = Object.keys(inventory).length;
-            document.getElementById('totalOps').textContent = history.length;
-
-            const dashboardGrid = document.getElementById('dashboardGrid');
-            dashboardGrid.innerHTML = '';
-            Object.entries(inventory).forEach(([name, item]) => {
-                const div = document.createElement('div');
-                div.className = 'inventory-item';
-                div.style.borderColor = getColor(item.qty);
-                div.innerHTML = getImgHtml(item) +
-                    '<div class="inventory-item-name">' + getName(item, name) + '</div>' +
-                    '<div class="inventory-item-qty" style="color:' + getColor(item.qty) + '">' + item.qty + '</div>' +
-                    '<div class="inventory-item-status">' + getStatus(item.qty) + '</div>' +
-                    (item.borrowed > 0 ? '<div class="inventory-item-borrowed">' + t.borrowedLabel + ': ' + item.borrowed + '</div>' : '');
-                dashboardGrid.appendChild(div);
-            });
-
-            const allItems = Object.entries(inventory).map(([name, item]) => ({...item, name}));
-            const alertBox = document.getElementById('alertBox');
-            if (allItems.length > 0) {
-                let html = '<div class="alert"><h3>' + t.alertTitle + '</h3>';
-                allItems.forEach(item => {
-                    const color = item.qty <= 0 ? '#DC2626' : '#16A34A';
-                    const icon = item.qty <= 0 ? '❌' : '⚠️';
-                    html += '<div class="alert-item" style="color:' + color + '; font-weight:bold;">' + icon + ' <strong>' + getName(item, item.name) + '</strong> : ' + item.qty + ' ' + item.unit + '</div>';
-                });
-                html += '</div>';
-                alertBox.innerHTML = html;
-            } else { alertBox.innerHTML = ''; }
-
-            const tableBody = document.getElementById('inventoryTable');
-            tableBody.innerHTML = '';
-            Object.entries(inventory).forEach(([name, item], idx) => {
-                const row = document.createElement('tr');
-                row.style.background = idx % 2 === 0 ? '#FAFAFA' : 'white';
-                row.innerHTML = '<td>' + getName(item, name) + '</td>' +
-                    '<td style="text-align:center;font-weight:bold;color:' + getColor(item.qty) + '">' + item.qty + '</td>' +
-                    '<td style="text-align:center;font-size:12px">' + getStatus(item.qty) + '</td>' +
-                    '<td style="text-align:center;color:#F59E0B">' + (item.borrowed > 0 ? item.borrowed : '-') + '</td>';
-                tableBody.appendChild(row);
-            });
-
-            const historyList = document.getElementById('historyList');
-            historyList.innerHTML = '';
-            if (history.length === 0) {
-                historyList.innerHTML = '<p style="text-align:center;color:#999;font-size:14px;">' + t.noHistory + '</p>';
-            } else {
-                [...history].reverse().forEach(entry => {
-                    const div = document.createElement('div');
-                    div.className = 'history-item ' + (entry.qty > 0 ? 'in' : 'out');
-                    const itemName = entry.material;
-                    const sectionBadge = '<span class="section-badge badge-office" style="font-size:10px">Office</span>';
-                    div.innerHTML = '<div class="history-item-left">' + sectionBadge +
-                        '<div class="history-item-name">' + itemName + '</div>' +
-                        '<div class="history-item-employee">👤 ' + entry.employee + '</div></div>' +
-                        '<div class="history-item-right">' +
-                        '<div class="history-item-qty" style="color:' + (entry.qty > 0 ? '#51CF66' : '#FF6B6B') + '">' + (entry.qty > 0 ? '+' : '') + entry.qty + ' ' + (entry.type === 'in' ? '📥' : '📤') + '</div>' +
-                        '<div class="history-item-date">📅 ' + entry.date + '</div></div>';
-                    historyList.appendChild(div);
-                });
-            }
-
-            const officeList = document.getElementById('officeMaterialsList');
-            officeList.innerHTML = '';
-            Object.entries(inventory).forEach(([name, item]) => {
-                const div = document.createElement('div');
-                div.className = 'material-row';
-                div.innerHTML = getImgSmall(item) +
-                    '<input type="text" value="' + (item.ar || name) + '" readonly style="background:#f0f0f0;">' +
-                    '<input type="text" value="' + (item.fr || name) + '" readonly style="background:#f0f0f0;">' +
-                    '<input type="text" value="' + (item.en || name) + '" readonly style="background:#f0f0f0;">' +
-                    '<input type="text" value="' + item.unit + '" readonly style="background:#f0f0f0;width:60px;">' +
-                    '<button class="btn-secondary" onclick="openEditModal(&quot;' + name + '&quot;, &quot;office&quot;)">' + t.btnEdit + '</button>' +
-                    '<button class="btn-danger" onclick="deleteMaterial(&quot;' + name + '&quot;, &quot;office&quot;)">' + t.btnDelete + '</button>';
-                officeList.appendChild(div);
-            });
-        }
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('lastUpdate').textContent = now.toLocaleString(currentLang === 'ar' ? 'ar-SA' : (currentLang === 'fr' ? 'fr-FR' : 'en-US'));
-        }
-
-        // Export / Import functions
         function exportData() {
             const data = { inventory, history, exportedAt: new Date().toISOString(), version: '1.0' };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1254,7 +1214,72 @@
             event.target.value = '';
         }
 
-        // Make functions global for inline onclick handlers
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = now.toLocaleString(currentLang === 'ar' ? 'ar-SA' : (currentLang === 'fr' ? 'fr-FR' : 'en-US'));
+        }
+
+        // ---- تهيئة التطبيق ----
+        async function initApp() {
+            // 1. تحميل من localStorage أولاً
+            const saved = localStorage.getItem('inventory');
+            if (saved) {
+                inventory = JSON.parse(saved);
+            } else {
+                // لا يوجد بيانات محفوظة → استخدم الافتراضية
+                inventory = JSON.parse(JSON.stringify(defaultOffice));
+                localStorage.setItem('inventory', JSON.stringify(inventory));
+            }
+
+            const savedHistory = localStorage.getItem('history');
+            if (savedHistory) {
+                history = JSON.parse(savedHistory);
+            } else {
+                history = [];
+                localStorage.setItem('history', JSON.stringify(history));
+            }
+
+            // 2. محاولة تحميل من السحابة (ستدمج البيانات)
+            if (cloudEnabled) {
+                const loaded = await loadFromCloud();
+                if (!loaded) {
+                    await syncToCloud();
+                }
+            } else {
+                updateSyncStatus('offline', '#FFA500');
+            }
+
+            // 3. تحديث الواجهة
+            updateMaterialOptions();
+            updateUI();
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // 4. الاستماع للتغييرات من السحابة (تحديث فوري)
+            if (cloudEnabled && db) {
+                onSnapshot(doc(db, "warehouse", "data"), (snap) => {
+                    if (snap.exists() && !isSyncing) {
+                        const data = snap.data();
+                        if (data.inventory && Object.keys(data.inventory).length > 0) {
+                            inventory = data.inventory;
+                            localStorage.setItem('inventory', JSON.stringify(inventory));
+                        }
+                        if (data.history) {
+                            history = data.history;
+                            localStorage.setItem('history', JSON.stringify(history));
+                        }
+                        updateMaterialOptions();
+                        updateUI();
+                        updateSyncStatus('online', '#51CF66');
+                    }
+                }, (err) => {
+                    console.error("Snapshot error:", err);
+                    updateSyncStatus('offline', '#FFA500');
+                });
+            }
+        }
+
+        // ---- ربط الوظائف للنطاق العام ----
         window.setLang = setLang;
         window.switchTab = switchTab;
         window.setType = setType;
@@ -1269,6 +1294,9 @@
         window.exportData = exportData;
         window.importData = importData;
         window.handleImport = handleImport;
+
+        // ---- بدء التطبيق ----
+        window.addEventListener('load', initApp);
     </script>
 </body>
 </html>
