@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Smart Warehouse | إدارة المخزون</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .lang-bar {
+            background: rgba(0,0,0,0.3);
+            padding: 8px 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .lang-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .lang-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .signature-top {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 1px;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+        .lang-switcher { display: flex; gap: 8px; }
+        .lang-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+        .lang-btn.active { background: white; color: #333; font-weight: bold; }
+        .lang-btn:hover { background: rgba(255,255,255,0.3); }
+        .sync-bar {
+            background: rgba(0,0,0,0.2);
+            padding: 6px 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 13px;
+            flex-wrap: wrap;
+        }
+        .sync-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            background: #FFA500;
+        }
+        .cloud-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .cloud-actions .lang-btn { background: rgba(255,255,255,0.15); }
+        .header {
+            background: rgba(0,0,0,0.25);
+            color: white;
+            padding: 1rem 1rem 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 3px solid rgba(255,255,255,0.15);
+        }
+        .logo-container {
+            background: #009FE3;
+            width: 100%;
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+        .logo-img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            max-height: 100px;
+            object-fit: contain;
+            display: block;
+        }
+        .company-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            margin-top: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            letter-spacing: 1px;
+        }
+        .header h1 { font-size: 26px; margin-bottom: 0.5rem; text-shadow: 0 2px 6px rgba(0,0,0,0.4); font-weight: 700; }
+        .header p { font-size: 14px; opacity: 0.95; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            padding: 1.5rem;
+            color: white;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
+        }
+        .stat-number { font-size: 24px; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-label { font-size: 12px; opacity: 0.8; }
+        .tabs {
+            display: flex;
+            gap: 4px;
+            padding: 0 1rem;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+            overflow-x: auto;
+            flex-wrap: nowrap;
+        }
+        .tab-btn {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .tab-btn.active { background: rgba(255,255,255,0.25); border-bottom-color: white; font-weight: bold; }
+        .tab-btn:hover { background: rgba(255,255,255,0.15); }
+        .tab-content { padding: 1.5rem; display: none; }
+        .tab-content.active { display: block; }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        .card h2 { color: #4a5568; margin-top: 0; margin-bottom: 1.5rem; }
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 6px;
+        }
+        .inventory-item {
+            background: white;
+            padding: 0.35rem 0.3rem;
+            border-radius: 8px;
+            border: 2px solid;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+        .inventory-item:hover { transform: translateY(-2px); }
+        .item-img { width: 32px; height: 32px; object-fit: cover; border-radius: 6px; margin-bottom: 0.2rem; border: 1px solid #eee; background: #f8f8f8; }
+        .inventory-item-name { font-weight: bold; font-size: 10px; margin-bottom: 0.15rem; line-height: 1.2; }
+        .inventory-item-qty { font-size: 14px; font-weight: bold; margin-bottom: 0.15rem; }
+        .inventory-item-status { font-size: 9px; color: #666; margin-bottom: 0.1rem; }
+        .inventory-item-borrowed { font-size: 8px; color: #F59E0B; }
+        .empty-img {
+            width: 32px; height: 32px; border-radius: 6px; border: 1px dashed #ccc;
+            display: flex; align-items: center; justify-content: center; font-size: 14px;
+            color: #ccc; background: #f8f8f8; margin: 0 auto 0.2rem auto;
+        }
+        .form { display: grid; gap: 1rem; max-width: 500px; margin: 0 auto; }
+        .form-group { display: grid; gap: 0.5rem; }
+        .form-group label { font-weight: bold; color: #333; }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.75rem; border-radius: 8px; border: 2px solid #DDD;
+            font-size: 16px; font-family: inherit;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: #4a5568; box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.1);
+        }
+        .type-buttons { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
+        .type-btn {
+            padding: 0.75rem; border-radius: 8px; border: 2px solid #DDD; background: white;
+            cursor: pointer; font-weight: normal; color: #333; transition: all 0.3s ease;
+        }
+        .type-btn.active-out { border-color: #FF6B6B; background: #FFE5E5; color: #FF6B6B; font-weight: bold; }
+        .type-btn.active-in { border-color: #51CF66; background: #E6F9F0; color: #51CF66; font-weight: bold; }
+        .type-btn.active-borrow { border-color: #F59E0B; background: #FFFBEB; color: #F59E0B; font-weight: bold; }
+        .type-btn.active-return { border-color: #009FE3; background: #E3F2FD; color: #009FE3; font-weight: bold; }
+        .submit-btn {
+            padding: 1rem; background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            color: white; border: none; border-radius: 8px; font-weight: bold;
+            font-size: 16px; cursor: pointer; margin-top: 1rem; transition: transform 0.2s ease;
+        }
+        .submit-btn:hover { transform: scale(1.02); }
+        .submit-btn:active { transform: scale(0.98); }
+        .btn-danger { background: #FF6B6B; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.2s ease; }
+        .btn-danger:hover { background: #E53935; }
+        .btn-secondary { background: #4a5568; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.2s ease; }
+        .btn-secondary:hover { background: #2d3748; }
+        .btn-success { background: #51CF66; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s ease; }
+        .btn-success:hover { background: #43B047; }
+        .btn-warning { background: #F59E0B; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s ease; }
+        .btn-warning:hover { background: #D97706; }
+        .btn-info { background: #009FE3; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s ease; }
+        .btn-info:hover { background: #0077B3; }
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        table thead { background: #f5f5f5; border-bottom: 2px solid #4a5568; }
+        table th { padding: 1rem; text-align: right; font-weight: bold; }
+        table td { padding: 1rem; border-bottom: 1px solid #EEE; }
+        table tbody tr:nth-child(even) { background: #FAFAFA; }
+        .history-list { display: grid; gap: 0.75rem; max-height: 400px; overflow-y: auto; }
+        .history-item {
+            padding: 1rem; border-radius: 8px; border-left: 4px solid;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 14px;
+        }
+        .history-item.in { background: #E6F9F0; border-left-color: #51CF66; }
+        .history-item.out { background: #FFE5E5; border-left-color: #FF6B6B; }
+        .history-item.borrow { background: #FFFBEB; border-left-color: #F59E0B; }
+        .history-item.return { background: #E3F2FD; border-left-color: #009FE3; }
+        .history-item-left { text-align: right; }
+        .history-item-name { font-weight: bold; margin-bottom: 0.25rem; }
+        .history-item-employee { color: #666; font-size: 12px; }
+        .history-item-right { text-align: right; }
+        .history-item-qty { font-weight: bold; }
+        .history-item-date { color: #666; font-size: 12px; }
+        .alert { background: #FFFBEB; border: 2px solid #F59E0B; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; }
+        .alert h3 { margin: 0 0 0.75rem 0; color: #92400E; font-size: 16px; }
+        .alert-item { font-size: 13px; margin-bottom: 0.3rem; padding: 4px 8px; background: rgba(255,255,255,0.6); border-radius: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .footer { background: rgba(0,0,0,0.2); color: white; padding: 1rem; text-align: center; font-size: 12px; margin-top: 2rem; }
+        .footer .signature { color: #FFD700; font-weight: bold; font-size: 14px; letter-spacing: 1px; }
+        .section-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; margin-bottom: 0.5rem; }
+        .badge-office { background: #E3F2FD; color: #1565C0; }
+        .material-manager { display: grid; gap: 1.5rem; }
+        .material-list { display: grid; gap: 0.75rem; }
+        .material-row {
+            display: grid;
+            grid-template-columns: 50px 1fr 1fr 1fr 60px 60px 60px;
+            gap: 6px; align-items: center; padding: 0.6rem;
+            background: #FAFAFA; border-radius: 8px; border: 1px solid #eee;
+        }
+        .material-row img { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; }
+        .material-row input { padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
+        .add-material-form { background: #f8f9ff; border: 2px dashed #4a5568; border-radius: 12px; padding: 1.5rem; display: grid; gap: 1rem; }
+        .add-material-form h3 { color: #4a5568; margin: 0; font-size: 16px; }
+        .img-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #ddd; display: none; background: #f8f8f8; }
+        .img-preview.visible { display: block; }
+        .file-btn {
+            background: #4a5568; color: white; padding: 8px 16px;
+            border-radius: 6px; cursor: pointer; font-size: 13px; display: inline-block;
+        }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); display: none;
+            align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white; border-radius: 16px; padding: 2rem;
+            max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal h3 { margin: 0 0 1.5rem 0; color: #4a5568; }
+        .modal-close { float: left; background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
+        .modal-close:hover { color: #333; }
+
+        /* Toast */
+        .toast-container {
+            position: fixed; top: 20px; left: 20px; z-index: 99999;
+            display: flex; flex-direction: column; gap: 10px; max-width: 400px; width: 100%;
+        }
+        .toast {
+            padding: 16px 20px; border-radius: 12px; color: white; font-size: 14px;
+            font-weight: 500; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease; display: flex; align-items: center; gap: 12px; direction: rtl;
+        }
+        .toast.success { background: #10B981; }
+        .toast.error { background: #EF4444; }
+        .toast.warning { background: #F59E0B; }
+        .toast.info { background: #009FE3; }
+        .toast .toast-icon { font-size: 20px; }
+        .toast .toast-close { margin-right: auto; cursor: pointer; background: none; border: none; color: white; font-size: 18px; opacity: 0.7; }
+        .toast .toast-close:hover { opacity: 1; }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100px); opacity: 0; } }
+        .toast.out { animation: slideOut 0.3s ease forwards; }
+
+        /* Login */
+        #loginOverlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center;
+            z-index: 9999; backdrop-filter: blur(8px);
+        }
+        #loginOverlay.hidden { display: none; }
+        .login-box {
+            background: white; padding: 2.5rem 2rem; border-radius: 20px;
+            max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.5); text-align: center;
+        }
+        .login-box h2 { color: #4a5568; margin-bottom: 0.5rem; font-size: 24px; }
+        .login-box p { color: #718096; font-size: 14px; margin-bottom: 1.5rem; }
+        .login-box input { width: 100%; padding: 0.75rem; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 16px; margin-bottom: 1rem; direction: ltr; text-align: left; }
+        .login-box input:focus { outline: none; border-color: #4a5568; box-shadow: 0 0 0 3px rgba(74,85,104,0.1); }
+        .login-box .login-btn { width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #4a5568, #2d3748); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
+        .login-box .login-btn:hover { transform: scale(1.02); }
+        .login-box .error-msg { color: #E53E3E; font-size: 14px; margin-top: 0.5rem; display: none; }
+        .login-box .error-msg.show { display: block; }
+        .login-box .signature { margin-top: 1.5rem; color: #A0AEC0; font-size: 13px; border-top: 1px solid #E2E8F0; padding-top: 1rem; }
+        .login-box .signature span { color: #FFD700; font-weight: bold; letter-spacing: 1px; }
+        .logout-btn {
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+            color: white; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: all 0.3s ease;
+        }
+        .logout-btn:hover { background: rgba(255,255,255,0.3); }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 20px; }
+            .logo-container { padding: 12px 16px; border-radius: 12px; }
+            .logo-img { max-height: 70px; }
+            .company-name { font-size: 14px; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .tabs { overflow-x: auto; }
+            .inventory-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+            table { font-size: 12px; }
+            table th, table td { padding: 0.5rem; }
+            .material-row { 
+                grid-template-columns: 40px 1fr 50px 50px; 
+                gap: 4px; padding: 0.5rem;
+            }
+            .material-row input:nth-child(3), .material-row input:nth-child(4) { display: none; }
+            .material-row input:nth-child(2) { font-size: 11px; }
+            .material-row button { font-size: 10px; padding: 4px 6px; }
+            .toast-container { top: 10px; left: 10px; right: 10px; max-width: none; }
+            .type-buttons { grid-template-columns: 1fr 1fr; }
+            .lang-bar { flex-direction: column; align-items: stretch; }
+            .lang-bar-left { justify-content: center; }
+            .lang-bar-right { justify-content: center; }
+            .signature-top { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login -->
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2>🔐 الدخول إلى نظام المخزون</h2>
+            <p>أدخل كلمة المرور للمتابعة إلى لوحة التحكم</p>
+            <input type="password" id="passwordInput" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter') login()">
+            <button class="login-btn" onclick="login()">دخول</button>
+            <div id="loginError" class="error-msg">❌ كلمة المرور غير صحيحة</div>
+            <div class="signature">✨ <span>By Youcef.B</span></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="container" id="appContainer">
+        <div class="lang-bar">
+            <div class="lang-bar-left">
+                <span class="signature-top">✨ By Youcef.B</span>
+            </div>
+            <div class="lang-bar-right">
+                <div class="cloud-actions">
+                    <button class="lang-btn" onclick="exportData()" title="تصدير بيانات الاحتياطي">📜 تصدير</button>
+                    <button class="lang-btn" onclick="importData()" title="استيراد بيانات الاحتياطي">📛 استيراد</button>
+                    <input type="file" id="importFile" style="display:none" accept=".json" onchange="handleImport(event)">
+                    <button class="logout-btn" id="logoutBtn" onclick="logout()" style="display:none;">🚪 خروج</button>
+                </div>
+                <div class="lang-switcher">
+                    <button class="lang-btn active" onclick="setLang('ar')" id="btn-ar">🇸🇦 العربية</button>
+                    <button class="lang-btn" onclick="setLang('fr')" id="btn-fr">🇫🇷 Français</button>
+                    <button class="lang-btn" onclick="setLang('en')" id="btn-en">🇬🇧 English</button>
+                </div>
+            </div>
+        </div>
+        <div class="sync-bar" id="syncStatus">
+            <span class="sync-dot" id="syncDot" style="background:#FFA500;"></span>
+            <span id="syncText">⏳ جاري المزامنة مع السحابة...</span>
+        </div>
+        <div class="header">
+            <div class="logo-container">
+                <img src="data:image/png;base64,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" alt="MAPA Logo" class="logo-img">
+                <div class="company-name">MAPA İNŞAAT ve TİCARET A.Ş.</div>
+            </div>
+            <h1 id="appTitle">📝 إدارة المخزون والمكتب</h1>
+            <p id="appSubtitle">نظام إدارة مخزون سريع وذكي</p>
+        </div>
+        <div class="stats">
+            <div class="stat-card"><div class="stat-number" id="totalQty">0</div><div class="stat-label" data-key="totalQty">إجمالي الكمية</div></div>
+            <div class="stat-card"><div class="stat-number" id="lowStock">0</div><div class="stat-label" data-key="lowStock">مخزون منخفض</div></div>
+            <div class="stat-card"><div class="stat-number" id="totalItems">0</div><div class="stat-label" data-key="totalItems">عدد المواد</div></div>
+            <div class="stat-card"><div class="stat-number" id="totalOps">0</div><div class="stat-label" data-key="totalOps">عدد العمليات</div></div>
+            <div class="stat-card"><div class="stat-number" id="borrowedCount">0</div><div class="stat-label" data-key="borrowedCount">🚨 مستعار حالياً</div></div>
+        </div>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')" data-key="tabDashboard">📳 لوحة التحكم</button>
+            <button class="tab-btn" data-tab="register" onclick="switchTab('register')" data-key="tabRegister">✍️ تسجيل عملية</button>
+            <button class="tab-btn" data-tab="inventory" onclick="switchTab('inventory')" data-key="tabInventory">📝 المخزون</button>
+            <button class="tab-btn" data-tab="borrow" onclick="switchTab('borrow')" data-key="tabBorrow">🚨 الاستعارات</button>
+            <button class="tab-btn" data-tab="history" onclick="switchTab('history')" data-key="tabHistory">📵 التاريخ</button>
+            <button class="tab-btn" data-tab="manage" onclick="switchTab('manage')" data-key="tabManage">⚙️ إدارة المواد</button>
+        </div>
+        <div id="dashboard" class="tab-content active">
+            <div id="alertBox"></div>
+            <div class="card"><h2 data-key="dashOffice">📳 حالة المخزون - Bureau</h2><div class="inventory-grid" id="dashboardGrid"></div></div>
+        </div>
+        <div id="register" class="tab-content">
+            <div class="card">
+                <h2 style="text-align: center;" data-key="quickReg">⚡ تسجيل عملية</h2>
+                <form class="form" onsubmit="submitForm(event)">
+                    <div class="form-group"><label data-key="material">المادة *</label><select id="material" required></select></div>
+                    <div class="form-group"><label data-key="quantity">الكمية *</label><input type="number" id="quantity" placeholder="أدخل الكمية" required></div>
+                    <div class="form-group">
+                        <label data-key="type">النوع</label>
+                        <div class="type-buttons">
+                            <button type="button" class="type-btn active-out" data-type="out" onclick="setType('out')" data-key="btnOut">📛 صرف</button>
+                            <button type="button" class="type-btn" data-type="in" onclick="setType('in')" data-key="btnIn">📜 إضافة</button>
+                        </div>
+                    </div>
+                    <div class="form-group"><label data-key="employee">الموظف *</label><input type="text" id="employee" placeholder="أدخل اسم الموظف" required dir="rtl"></div>
+                    <div class="form-group"><label data-key="date">التاريخ</label><input type="date" id="date"></div>
+                    <button type="submit" class="submit-btn" data-key="btnSubmit">✅ تسجيل الآن</button>
+                </form>
+            </div>
+        </div>
+        <div id="inventory" class="tab-content">
+            <div class="card">
+                <h2 data-key="invOffice">📝 تفاصيل المخزون - Bureau</h2>
+                <div class="table-wrapper">
+                    <table><thead><tr><th data-key="thMaterial">المادة</th><th data-key="thQty">الكمية</th><th data-key="thStatus">الحالة</th><th data-key="thBorrowed">المستعار</th></tr></thead><tbody id="inventoryTable"></tbody></table>
+                </div>
+            </div>
+        </div>
+        <div id="borrow" class="tab-content">
+            <div class="card">
+                <h2 style="text-align: center;" data-key="borrowTitle">🚨 نظام الاستعارة والإرجاع</h2>
+                <form class="form" onsubmit="submitBorrowForm(event)">
+                    <div class="form-group"><label data-key="material">المادة *</label><select id="borrowMaterial" required></select></div>
+                    <div class="form-group">
+                        <label data-key="borrowType">نوع العملية</label>
+                        <div class="type-buttons">
+                            <button type="button" class="type-btn active-borrow" data-type="borrow" onclick="setBorrowType('borrow')" data-key="btnBorrow">🚨 استعارة</button>
+                            <button type="button" class="type-btn" data-type="return" onclick="setBorrowType('return')" data-key="btnReturn">⬅️ إرجاع</button>
+                        </div>
+                    </div>
+                    <div class="form-group"><label data-key="quantity">الكمية *</label><input type="number" id="borrowQuantity" placeholder="أدخل الكمية" required></div>
+                    <div class="form-group"><label data-key="employee">اسم الموظف/المستلم *</label><input type="text" id="borrowEmployee" placeholder="أدخل اسم الموظف" required dir="rtl"></div>
+                    <div class="form-group"><label data-key="borrowNote">ملاحظة (اختياري)</label><input type="text" id="borrowNote" placeholder="سبب الاستعارة أو ملاحظة"></div>
+                    <div class="form-group"><label data-key="date">التاريخ</label><input type="date" id="borrowDate"></div>
+                    <button type="submit" class="submit-btn" id="borrowSubmitBtn" data-key="btnBorrowSubmit">🚨 تسجيل استعارة</button>
+                </form>
+            </div>
+            <div class="card"><h2 data-key="borrowHistory">📵 سجل الاستعارات</h2><div class="history-list" id="borrowHistoryList"></div></div>
+        </div>
+        <div id="history" class="tab-content">
+            <div class="card"><h2 data-key="historyTitle">📵 سجل العمليات</h2><div class="history-list" id="historyList"></div></div>
+        </div>
+        <div id="manage" class="tab-content">
+            <div class="card">
+                <h2>⚙️ <span data-key="manageTitle">إدارة المواد</span></h2>
+                <div class="material-manager">
+                    <div class="add-material-form">
+                        <h3>➕ <span data-key="addOffice">إضافة مادة مكتبية</span></h3>
+                        <div class="form-group"><label data-key="nameAr">الاسم بالعربية</label><input type="text" id="newOfficeAr" placeholder="مثال: أقلام حمراء"></div>
+                        <div class="form-group"><label data-key="nameFr">الاسم بالفرنسية</label><input type="text" id="newOfficeFr" placeholder="ex: Stylos rouges"></div>
+                        <div class="form-group"><label data-key="nameEn">الاسم بالإنجليزية</label><input type="text" id="newOfficeEn" placeholder="ex: Red pens"></div>
+                        <div class="form-group"><label data-key="unit">الوحدة</label><input type="text" id="newOfficeUnit" placeholder="قطعة / kg / L"></div>
+                        <div class="form-group">
+                            <label data-key="image">الصورة</label>
+                            <div style="display:flex; gap:12px; align-items:center;">
+                                <label class="file-btn" style="position:relative; overflow:hidden; display:inline-block;">
+                                    🖼️ <span data-key="chooseImg">اختر صورة</span>
+                                    <input type="file" accept="image/*" onchange="previewImage(this, 'previewOffice')" style="position:absolute; top:0; left:0; opacity:0; width:100%; height:100%; cursor:pointer;">
+                                </label>
+                                <label class="file-btn" style="position:relative; overflow:hidden; display:inline-block; background:#2d3748;">
+                                    📲 التقاط صورة
+                                    <input type="file" accept="image/*" capture="environment" onchange="previewImage(this, 'previewOffice')" style="position:absolute; top:0; left:0; opacity:0; width:100%; height:100%; cursor:pointer;">
+                                </label>
+                                <img id="previewOffice" class="img-preview"><div id="emptyOffice" class="empty-img">🖼️</div>
+                            </div>
+                        </div>
+                        <button class="btn-success" onclick="addOfficeMaterial()" data-key="btnAdd">➕ إضافة</button>
+                    </div>
+                    <div class="card" style="background:#f8f9ff;">
+                        <h3>📵 <span data-key="listOffice">قائمة مواد المكتب</span></h3>
+                        <div class="material-list" id="officeMaterialsList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>MAPA İNŞAAT ve TİCARET A.Ş. | <span data-key="footerText">نظام مخزون ذكي | التحديث تلقائي</span> | <span id="lastUpdate"></span></p>
+            <p class="signature">✨ By Youcef.B</p>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h3>✏️ <span data-key="editTitle">تعديل المادة</span></h3>
+            <div class="form" style="margin-top:1rem;">
+                <input type="hidden" id="editKey"><input type="hidden" id="editSection">
+                <div class="form-group"><label data-key="nameAr">الاسم بالعربية</label><input type="text" id="editAr"></div>
+                <div class="form-group"><label data-key="nameFr">الاسم بالفرنسية</label><input type="text" id="editFr"></div>
+                <div class="form-group"><label data-key="nameEn">الاسم بالإنجليزية</label><input type="text" id="editEn"></div>
+                <div class="form-group"><label data-key="unit">الوحدة</label><input type="text" id="editUnit"></div>
+                <div class="form-group">
+                    <label data-key="image">الصورة</label>
+                    <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
+                        <img id="editPreview" class="img-preview visible" style="display:block;">
+                        <label class="file-btn" style="position:relative; overflow:hidden; display:inline-block;">
+                            🖼️ <span data-key="changeImg">تغيير الصورة</span>
+                            <input type="file" accept="image/*" onchange="previewEditImage(this)" style="position:absolute; top:0; left:0; opacity:0; width:100%; height:100%; cursor:pointer;">
+                        </label>
+                        <label class="file-btn" style="position:relative; overflow:hidden; display:inline-block; background:#2d3748;">
+                            📲 التقاط صورة
+                            <input type="file" accept="image/*" capture="environment" onchange="previewEditImage(this)" style="position:absolute; top:0; left:0; opacity:0; width:100%; height:100%; cursor:pointer;">
+                        </label>
+                    </div>
+                </div>
+                <button class="submit-btn" onclick="saveEdit()" data-key="btnSave">💾 حفظ التعديلات</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        // ✅ أضفنا setDoc هنا
+        import { getFirestore, doc, setDoc, updateDoc, onSnapshot, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // ===================== إعدادات Firebase =====================
+        // ⚠️ استبدل هذه الإعدادات بإعدادات مشروعك من Firebase Console
+ const firebaseConfig = {
+  apiKey: "AIzaSyAZn1okMYzlwpfkI_8pyJQyd_NNk6vhJmk",
+  authDomain: "magasine-6f1ef.firebaseapp.com",
+  projectId: "magasine-6f1ef",
+  storageBucket: "magasine-6f1ef.firebasestorage.app",
+  messagingSenderId: "522494730439",
+  appId: "1:522494730439:web:8cfd445b6ee209f5d4dee2"
+};
+
+        const defaultOffice = {
+            'أقلام رصاص': { qty: 80, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'أقلام رصاص', fr: 'Crayons', en: 'Pencils', img: '' },
+            'أقلام حبر أزرق': { qty: 30, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'أقلام حبر أزرق', fr: 'Stylos gel bleu', en: 'Blue gel pens', img: '' },
+            'أقلام حبر أسود': { qty: 25, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'أقلام حبر أسود', fr: 'Stylos gel noir', en: 'Black gel pens', img: '' },
+            'أقلام تلوين': { qty: 15, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'أقلام تلوين', fr: 'Crayons de couleur', en: 'Coloring pens', img: '' },
+            'دفاتر A4': { qty: 40, unit: 'دفتر', borrowed: 0, section: 'office', ar: 'دفاتر A4', fr: 'Cahiers A4', en: 'A4 Notebooks', img: '' },
+            'ورق أبيض': { qty: 100, unit: 'ورقة', borrowed: 0, section: 'office', ar: 'ورق أبيض', fr: 'Papier blanc', en: 'White paper', img: '' },
+            'ورق ملون': { qty: 60, unit: 'ورقة', borrowed: 0, section: 'office', ar: 'ورق ملون', fr: 'Papier coloré', en: 'Colored paper', img: '' },
+            'مسطرة': { qty: 20, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'مسطرة', fr: 'Règle', en: 'Ruler', img: '' },
+            'ممحاة': { qty: 35, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'ممحاة', fr: 'Gomme', en: 'Eraser', img: '' }
+        };
+
+        const translations = {
+            ar: { appTitle: "📝 إدارة المخزون والمكتب", appSubtitle: "نظام إدارة مخزون سريع وذكي", totalQty: "إجمالي الكمية", lowStock: "مخزون منخفض", totalItems: "عدد المواد", totalOps: "عدد العمليات", borrowedCount: "🚨 مستعار حالياً", tabDashboard: "📳 لوحة التحكم", tabRegister: "✍️ تسجيل عملية", tabInventory: "📝 المخزون", tabBorrow: "🚨 الاستعارات", tabHistory: "📵 التاريخ", tabManage: "⚙️ إدارة المواد", dashOffice: "📳 حالة المخزون - Bureau", quickReg: "⚡ تسجيل عملية", material: "المادة *", quantity: "الكمية *", type: "النوع", btnOut: "📛 صرف", btnIn: "📜 إضافة", employee: "الموظف *", date: "التاريخ", btnSubmit: "✅ تسجيل الآن", invOffice: "📝 تفاصيل المخزون - Bureau", thMaterial: "المادة", thQty: "الكمية", thStatus: "الحالة", thBorrowed: "المستعار", historyTitle: "📵 سجل العمليات", footerText: "نظام مخزون ذكي | التحديث تلقائي", alertTitle: "⚠️ تنبيه: مخزون منخفض", noHistory: "لا توجد عمليات مسجلة حتى الآن", statusMissing: "❌ ناقص", statusLow: "⚠️ منخفض", statusMed: "📳 متوسط", statusOK: "✅ كافٍ", borrowedLabel: "🚨 مستعار", manageTitle: "إدارة المواد", addOffice: "إضافة مادة مكتبية", nameAr: "الاسم بالعربية", nameFr: "الاسم بالفرنسية", nameEn: "الاسم بالإنجليزية", unit: "الوحدة", image: "الصورة", chooseImg: "اختر صورة", changeImg: "تغيير الصورة", btnAdd: "➕ إضافة", btnSave: "💾 حفظ التعديلات", listOffice: "قائمة مواد المكتب", editTitle: "تعديل المادة", btnEdit: "تعديل", btnDelete: "حذف", confirmDelete: "هل أنت متأكد من حذف هذه المادة؟", syncOnline: "✅ متصل بالسحابة – مزامنة فورية", syncOffline: "⚠️ وضع غير متصل – حفظ محلي فقط", syncError: "❌ خطأ في الاتصال – استخدم التصدير/الاستيراد", syncSyncing: "⏳ جاري المزامنة...", borrowTitle: "🚨 نظام الاستعارة والإرجاع", borrowType: "نوع العملية", btnBorrow: "🚨 استعارة", btnReturn: "⬅️ إرجاع", borrowNote: "ملاحظة (اختياري)", btnBorrowSubmit: "🚨 تسجيل استعارة", btnReturnSubmit: "⬅️ تسجيل إرجاع", borrowHistory: "📵 سجل الاستعارات", borrowSuccess: "✅ تم تسجيل الاستعارة بنجاح!", returnSuccess: "✅ تم تسجيل الإرجاع بنجاح!", noBorrowHistory: "لا توجد استعارات مسجلة" },
+            fr: { appTitle: "📝 Entrepôt Stylos & Papier", appSubtitle: "Système de gestion d'entrepôt intelligent et rapide", totalQty: "Quantité Totale", lowStock: "Stock Faible", totalItems: "Types de Matériaux", totalOps: "Opérations Enregistrées", borrowedCount: "🚨 Emprunté actuellement", tabDashboard: "📳 Tableau de Bord", tabRegister: "✍️ Enregistrement Rapide", tabInventory: "📝 Inventaire", tabBorrow: "🚨 Emprunts", tabHistory: "📵 Historique", tabManage: "⚙️ Gérer Matériaux", dashOffice: "📳 État du Stock - Bureau", quickReg: "⚡ Enregistrement Rapide", material: "Matériel *", quantity: "Quantité *", type: "Type", btnOut: "📛 Sortie", btnIn: "📜 Entrée", employee: "Employé *", date: "Date", btnSubmit: "✅ Enregistrer", invOffice: "📝 Détails Inventaire - Bureau", thMaterial: "Matériel", thQty: "Quantité", thStatus: "État", thBorrowed: "Emprunté", historyTitle: "📵 Historique des Opérations", footerText: "Système Entrepôt Intelligent | Mise à jour automatique", alertTitle: "⚠️ Alerte: Stock Faible", noHistory: "Aucune opération enregistrée pour le moment", statusMissing: "❌ Manquant", statusLow: "⚠️ Faible", statusMed: "📳 Moyen", statusOK: "✅ Suffisant", borrowedLabel: "🚨 Emprunté", manageTitle: "Gérer les Matériaux", addOffice: "Ajouter Matériel Bureau", nameAr: "Nom en Arabe", nameFr: "Nom en Français", nameEn: "Nom en Anglais", unit: "Unité", image: "Image", chooseImg: "Choisir image", changeImg: "Changer image", btnAdd: "➕ Ajouter", btnSave: "💾 Sauvegarder", listOffice: "Liste Matériaux Bureau", editTitle: "Modifier Matériel", btnEdit: "Modifier", btnDelete: "Supprimer", confirmDelete: "Êtes-vous sûr de vouloir supprimer ce matériel ?", syncOnline: "✅ Connecté au cloud – synchro instantanée", syncOffline: "⚠️ Mode hors-ligne – sauvegarde locale uniquement", syncError: "❌ Erreur de connexion – utilisez Export/Import", syncSyncing: "⏳ Synchronisation...", borrowTitle: "🚨 Système d'emprunt et de retour", borrowType: "Type d'opération", btnBorrow: "🚨 Emprunter", btnReturn: "⬅️ Retourner", borrowNote: "Note (optionnel)", btnBorrowSubmit: "🚨 Enregistrer l'emprunt", btnReturnSubmit: "⬅️ Enregistrer le retour", borrowHistory: "📵 Historique des emprunts", borrowSuccess: "✅ Emprunt enregistré avec succès!", returnSuccess: "✅ Retour enregistré avec succès!", noBorrowHistory: "Aucun emprunt enregistré" },
+            en: { appTitle: "📝 Pens & Paper Warehouse", appSubtitle: "Smart & Fast Warehouse Management System", totalQty: "Total Quantity", lowStock: "Low Stock", totalItems: "Material Types", totalOps: "Recorded Operations", borrowedCount: "🚨 Currently Borrowed", tabDashboard: "📳 Dashboard", tabRegister: "✍️ Quick Register", tabInventory: "📝 Inventory", tabBorrow: "🚨 Borrowings", tabHistory: "📵 History", tabManage: "⚙️ Manage Materials", dashOffice: "📳 Stock Status - Office", quickReg: "⚡ Quick Register", material: "Material *", quantity: "Quantity *", type: "Type", btnOut: "📛 Out", btnIn: "📜 In", employee: "Employee *", date: "Date", btnSubmit: "✅ Register Now", invOffice: "📝 Inventory Details - Office", thMaterial: "Material", thQty: "Quantity", thStatus: "Status", thBorrowed: "Borrowed", historyTitle: "📵 Operations History", footerText: "Smart Warehouse System | Auto Update", alertTitle: "⚠️ Warning: Low Stock", noHistory: "No operations recorded yet", statusMissing: "❌ Missing", statusLow: "⚠️ Low", statusMed: "📳 Medium", statusOK: "✅ Sufficient", borrowedLabel: "🚨 Borrowed", manageTitle: "Manage Materials", addOffice: "Add Office Material", nameAr: "Name in Arabic", nameFr: "Name in French", nameEn: "Name in English", unit: "Unit", image: "Image", chooseImg: "Choose image", changeImg: "Change image", btnAdd: "➕ Add", btnSave: "💾 Save Changes", listOffice: "Office Materials List", editTitle: "Edit Material", btnEdit: "Edit", btnDelete: "Delete", confirmDelete: "Are you sure you want to delete this material?", syncOnline: "✅ Cloud connected – live sync", syncOffline: "⚠️ Offline mode – local storage only", syncError: "❌ Connection error – use Export/Import", syncSyncing: "⏳ Syncing...", borrowTitle: "🚨 Borrow & Return System", borrowType: "Operation Type", btnBorrow: "🚨 Borrow", btnReturn: "⬅️ Return", borrowNote: "Note (optional)", btnBorrowSubmit: "🚨 Register Borrow", btnReturnSubmit: "⬅️ Register Return", borrowHistory: "📵 Borrow History", borrowSuccess: "✅ Borrow registered successfully!", returnSuccess: "✅ Return registered successfully!", noBorrowHistory: "No borrowings recorded" }
+        };
+
+        // ===================== Core =====================
+        let app, db, cloudEnabled = false;
+        try {
+            if (firebaseConfig.apiKey && firebaseConfig.apiKey.length > 10) {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                cloudEnabled = true;
+            }
+        } catch (e) { console.warn("Firebase init failed:", e); }
+
+        let currentLang = 'ar';
+        let inventory = {};
+        let history = [];
+        let borrowHistory = [];
+        let currentType = 'out';
+        let currentBorrowType = 'borrow';
+        let isSyncing = false;
+        let syncTimeout = null;
+        let isAdmin = false;
+        let updateTimeout = null;
+        const ADMIN_PASSWORD = "youcef";
+
+        // ===================== Auth =====================
+        function checkAuth() {
+            const session = sessionStorage.getItem('warehouse_admin');
+            if (session === 'true') { isAdmin = true; document.getElementById('loginOverlay').classList.add('hidden'); document.getElementById('logoutBtn').style.display = 'inline-block'; showAdminControls(true); } 
+            else { isAdmin = false; document.getElementById('loginOverlay').classList.remove('hidden'); document.getElementById('logoutBtn').style.display = 'none'; showAdminControls(false); }
+        }
+        function showAdminControls(show) {
+            ['register', 'manage', 'borrow'].forEach(id => {
+                const tab = document.querySelector(`[data-tab="${id}"]`);
+                if (tab) tab.style.display = show ? 'inline-block' : 'none';
+                const content = document.getElementById(id);
+                if (content) content.style.display = show ? '' : 'none';
+            });
+            document.getElementById('logoutBtn').style.display = show ? 'inline-block' : 'none';
+        }
+        window.login = function() {
+            const input = document.getElementById('passwordInput');
+            const error = document.getElementById('loginError');
+            if (input.value === ADMIN_PASSWORD) {
+                sessionStorage.setItem('warehouse_admin', 'true');
+                isAdmin = true;
+                document.getElementById('loginOverlay').classList.add('hidden');
+                document.getElementById('logoutBtn').style.display = 'inline-block';
+                showAdminControls(true);
+                error.classList.remove('show');
+                input.value = '';
+                fullUpdateUI();
+                showToast('✅ تم تسجيل الدخول بنجاح!', 'success');
+            } else { error.classList.add('show'); input.value = ''; input.focus(); showToast('❌ كلمة المرور غير صحيحة.', 'error'); }
+        };
+        window.logout = function() {
+            sessionStorage.removeItem('warehouse_admin');
+            isAdmin = false;
+            document.getElementById('loginOverlay').classList.remove('hidden');
+            document.getElementById('logoutBtn').style.display = 'none';
+            showAdminControls(false);
+            fullUpdateUI();
+            showToast('🚪 تم تسجيل الخروج.', 'info');
+        };
+
+        // ===================== Toast =====================
+        function showToast(message, type = 'info', duration = 4000) {
+            const container = document.getElementById('toastContainer');
+            const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span class="toast-icon">${icons[type] || 'ℹ️'}</span><span>${message}</span><button class="toast-close" onclick="this.parentElement.remove()">×</button>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.add('out'); setTimeout(() => toast.remove(), 300); }, duration);
+        }
+        window.showToast = showToast;
+
+        // ===================== Sync =====================
+        function updateSyncStatus(status, color) {
+            const dot = document.getElementById('syncDot');
+            const text = document.getElementById('syncText');
+            const t = translations[currentLang] || translations.ar;
+            if (dot) dot.style.background = color || '#FFA500';
+            if (text) {
+                if (status === 'online') text.textContent = t.syncOnline;
+                else if (status === 'offline') text.textContent = t.syncOffline;
+                else if (status === 'error') text.textContent = t.syncError;
+                else if (status === 'syncing') text.textContent = t.syncSyncing;
+                else text.textContent = status;
+            }
+        }
+
+        // ✅ التعديل السحري: استخدام setDoc مع merge:true لإنشاء المستند تلقائياً
+        async function syncToCloud() {
+            if (!cloudEnabled || !db || isSyncing) return;
+            isSyncing = true;
+            updateSyncStatus('syncing', '#009FE3');
+            try {
+                await setDoc(doc(db, "warehouse", "data"), {
+                    inventory: inventory,
+                    history: history,
+                    borrowHistory: borrowHistory,
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+                updateSyncStatus('online', '#51CF66');
+            } catch (e) {
+                console.error("Sync error:", e);
+                updateSyncStatus('error', '#FF6B6B');
+            } finally {
+                isSyncing = false;
+            }
+        }
+
+        function scheduleSync() {
+            if (syncTimeout) clearTimeout(syncTimeout);
+            syncTimeout = setTimeout(() => {
+                syncToCloud();
+                syncTimeout = null;
+            }, 3000);
+        }
+
+        async function loadFromCloud() {
+            if (!cloudEnabled || !db) return false;
+            try {
+                const snap = await getDoc(doc(db, "warehouse", "data"));
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.inventory && Object.keys(data.inventory).length > 0) inventory = data.inventory;
+                    if (data.history) history = data.history;
+                    if (data.borrowHistory) borrowHistory = data.borrowHistory;
+                    localStorage.setItem('inventory', JSON.stringify(inventory));
+                    localStorage.setItem('history', JSON.stringify(history));
+                    localStorage.setItem('borrowHistory', JSON.stringify(borrowHistory));
+                    updateSyncStatus('online', '#51CF66');
+                    return true;
+                }
+            } catch (e) { console.error("Load error:", e); updateSyncStatus('offline', '#FFA500'); }
+            return false;
+        }
+
+        // ===================== UI =====================
+        function getColor(qty) { if (qty < 0) return '#FF6B6B'; if (qty < 10) return '#FFA500'; if (qty < 50) return '#FFD700'; return '#51CF66'; }
+        function getStatus(qty) { const t = translations[currentLang] || translations.ar; if (qty < 0) return t.statusMissing; if (qty < 10) return t.statusLow; if (qty < 50) return t.statusMed; return t.statusOK; }
+        function getName(item, key) { if (currentLang === 'ar' && item.ar) return item.ar; if (currentLang === 'en' && item.en) return item.en; if (currentLang === 'fr' && item.fr) return item.fr; return key; }
+        function getImgHtml(item) { if (item.img) return '<img src="' + item.img + '" class="item-img" alt="">'; return '<div class="empty-img">🖼️</div>'; }
+        function getImgSmall(item) { if (item.img) return '<img src="' + item.img + '" alt="">'; return '<div style="width:50px;height:50px;border-radius:6px;border:1px solid #ddd;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:20px;">🖼️</div>'; }
+
+        function updateStats() {
+            const totalQty = Object.values(inventory).reduce((s, i) => s + i.qty, 0);
+            const lowStock = Object.values(inventory).filter(i => i.qty < 10 && i.qty >= 0).length;
+            const totalBorrowed = Object.values(inventory).reduce((s, i) => s + i.borrowed, 0);
+            document.getElementById('totalQty').textContent = totalQty;
+            document.getElementById('lowStock').textContent = lowStock;
+            document.getElementById('totalItems').textContent = Object.keys(inventory).length;
+            document.getElementById('totalOps').textContent = history.length;
+            document.getElementById('borrowedCount').textContent = totalBorrowed;
+        }
+
+        function updateDashboard() {
+            const t = translations[currentLang] || translations.ar;
+            const grid = document.getElementById('dashboardGrid');
+            grid.innerHTML = '';
+            const frag = document.createDocumentFragment();
+            Object.entries(inventory).forEach(([name, item]) => {
+                const div = document.createElement('div');
+                div.className = 'inventory-item';
+                div.style.borderColor = getColor(item.qty);
+                div.innerHTML = getImgHtml(item) +
+                    '<div class="inventory-item-name">' + getName(item, name) + '</div>' +
+                    '<div class="inventory-item-qty" style="color:' + getColor(item.qty) + '">' + item.qty + '</div>' +
+                    '<div class="inventory-item-status">' + getStatus(item.qty) + '</div>' +
+                    (item.borrowed > 0 ? '<div class="inventory-item-borrowed">' + t.borrowedLabel + ': ' + item.borrowed + '</div>' : '');
+                frag.appendChild(div);
+            });
+            grid.appendChild(frag);
+        }
+
+        function updateInventoryTable() {
+            const tbody = document.getElementById('inventoryTable');
+            tbody.innerHTML = '';
+            const frag = document.createDocumentFragment();
+            Object.entries(inventory).forEach(([name, item], idx) => {
+                const row = document.createElement('tr');
+                row.style.background = idx % 2 === 0 ? '#FAFAFA' : 'white';
+                row.innerHTML = '<td>' + getName(item, name) + '</td><td style="text-align:center;font-weight:bold;color:' + getColor(item.qty) + '">' + item.qty + '</td><td style="text-align:center;font-size:12px">' + getStatus(item.qty) + '</td><td style="text-align:center;color:#F59E0B">' + (item.borrowed > 0 ? item.borrowed : '-') + '</td>';
+                frag.appendChild(row);
+            });
+            tbody.appendChild(frag);
+        }
+
+        function updateHistory() {
+            const t = translations[currentLang] || translations.ar;
+            const list = document.getElementById('historyList');
+            list.innerHTML = '';
+            if (history.length === 0) { list.innerHTML = '<p style="text-align:center;color:#999;font-size:14px;">' + t.noHistory + '</p>'; return; }
+            const frag = document.createDocumentFragment();
+            [...history].reverse().forEach(entry => {
+                const div = document.createElement('div');
+                const typeClass = entry.type || 'out';
+                div.className = 'history-item ' + (typeClass === 'in' ? 'in' : (typeClass === 'borrow' ? 'borrow' : (typeClass === 'return' ? 'return' : 'out')));
+                const typeIcon = typeClass === 'in' ? '📜' : (typeClass === 'borrow' ? '🚨' : (typeClass === 'return' ? '⬅️' : '📛'));
+                const typeLabel = typeClass === 'in' ? 'إضافة' : (typeClass === 'borrow' ? 'استعارة' : (typeClass === 'return' ? 'إرجاع' : 'صرف'));
+                div.innerHTML = '<div class="history-item-left"><span class="section-badge badge-office" style="font-size:10px">Office</span><div class="history-item-name">' + entry.material + '</div><div class="history-item-employee">👤 ' + entry.employee + (entry.note ? ' | 📑 ' + entry.note : '') + '</div></div><div class="history-item-right"><div class="history-item-qty" style="color:' + (entry.qty > 0 ? '#51CF66' : '#FF6B6B') + '">' + (entry.qty > 0 ? '+' : '') + entry.qty + ' ' + typeIcon + ' ' + typeLabel + '</div><div class="history-item-date">📮 ' + entry.date + '</div></div>';
+                frag.appendChild(div);
+            });
+            list.appendChild(frag);
+        }
+
+        function updateBorrowHistory() {
+            const t = translations[currentLang] || translations.ar;
+            const list = document.getElementById('borrowHistoryList');
+            list.innerHTML = '';
+            if (borrowHistory.length === 0) { list.innerHTML = '<p style="text-align:center;color:#999;font-size:14px;">' + t.noBorrowHistory + '</p>'; return; }
+            const frag = document.createDocumentFragment();
+            [...borrowHistory].reverse().forEach(entry => {
+                const div = document.createElement('div');
+                const typeClass = entry.type || 'borrow';
+                div.className = 'history-item ' + (typeClass === 'borrow' ? 'borrow' : 'return');
+                const typeIcon = typeClass === 'borrow' ? '🚨' : '⬅️';
+                const typeLabel = typeClass === 'borrow' ? 'استعارة' : 'إرجاع';
+                div.innerHTML = '<div class="history-item-left"><span class="section-badge badge-office" style="font-size:10px">Office</span><div class="history-item-name">' + entry.material + '</div><div class="history-item-employee">👤 ' + entry.employee + (entry.note ? ' | 📑 ' + entry.note : '') + '</div></div><div class="history-item-right"><div class="history-item-qty" style="color:' + (typeClass === 'borrow' ? '#F59E0B' : '#009FE3') + '">' + entry.qty + ' ' + typeIcon + ' ' + typeLabel + '</div><div class="history-item-date">📮 ' + entry.date + '</div></div>';
+                frag.appendChild(div);
+            });
+            list.appendChild(frag);
+        }
+
+        function updateManageList() {
+            const t = translations[currentLang] || translations.ar;
+            const list = document.getElementById('officeMaterialsList');
+            list.innerHTML = '';
+            const frag = document.createDocumentFragment();
+            if (isAdmin) {
+                Object.entries(inventory).forEach(([name, item]) => {
+                    const div = document.createElement('div');
+                    div.className = 'material-row';
+                    div.innerHTML = getImgSmall(item) +
+                        '<input type="text" value="' + (item.ar || name) + '" readonly style="background:#f0f0f0;">' +
+                        '<input type="text" value="' + (item.fr || name) + '" readonly style="background:#f0f0f0;">' +
+                        '<input type="text" value="' + (item.en || name) + '" readonly style="background:#f0f0f0;">' +
+                        '<input type="text" value="' + item.unit + '" readonly style="background:#f0f0f0;width:60px;">' +
+                        '<button class="btn-secondary" onclick="openEditModal(&quot;' + name + '&quot;, &quot;office&quot;)">' + t.btnEdit + '</button>' +
+                        '<button class="btn-danger" onclick="deleteMaterial(&quot;' + name + '&quot;, &quot;office&quot;)">' + t.btnDelete + '</button>';
+                    frag.appendChild(div);
+                });
+            } else {
+                Object.entries(inventory).forEach(([name, item]) => {
+                    const div = document.createElement('div');
+                    div.className = 'material-row';
+                    div.innerHTML = getImgSmall(item) +
+                        '<input type="text" value="' + (item.ar || name) + '" readonly style="background:#f0f0f0;">' +
+                        '<input type="text" value="' + (item.fr || name) + '" readonly style="background:#f0f0f0;">' +
+                        '<input type="text" value="' + (item.en || name) + '" readonly style="background:#f0f0f0;">' +
+                        '<input type="text" value="' + item.unit + '" readonly style="background:#f0f0f0;width:60px;">' +
+                        '<span style="color:#999;font-size:12px;">🔒 للمشرفين فقط</span>';
+                    frag.appendChild(div);
+                });
+            }
+            list.appendChild(frag);
+        }
+
+        function checkLowStock() {
+            const alertBox = document.getElementById('alertBox');
+            const low = Object.entries(inventory).filter(([n, i]) => i.qty < 10 && i.qty >= 0).map(([n, i]) => ({...i, name: n}));
+            const empty = Object.entries(inventory).filter(([n, i]) => i.qty <= 0).map(([n, i]) => ({...i, name: n}));
+            if (low.length > 0 || empty.length > 0) {
+                const t = translations[currentLang] || translations.ar;
+                let html = '<div class="alert"><h3>' + t.alertTitle + '</h3>';
+                [...empty, ...low].forEach(item => {
+                    const color = item.qty <= 0 ? '#DC2626' : '#16A34A';
+                    const icon = item.qty <= 0 ? '❌' : '⚠️';
+                    html += '<div class="alert-item" style="color:' + color + '; font-weight:bold;">' + icon + ' <strong>' + getName(item, item.name) + '</strong> : ' + item.qty + ' ' + item.unit + '</div>';
+                });
+                html += '</div>';
+                alertBox.innerHTML = html;
+            } else { alertBox.innerHTML = ''; }
+        }
+
+        function fullUpdateUI() {
+            requestAnimationFrame(() => {
+                updateStats();
+                updateDashboard();
+                updateInventoryTable();
+                updateHistory();
+                updateBorrowHistory();
+                updateManageList();
+                checkLowStock();
+            });
+        }
+
+        function debounceUpdate() {
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(() => { fullUpdateUI(); updateTimeout = null; }, 200);
+        }
+
+        // ===================== Helpers =====================
+        function isDuplicateName(name, excludeKey = null) {
+            const keys = Object.keys(inventory);
+            if (excludeKey) return keys.some(k => k !== excludeKey && k.toLowerCase() === name.toLowerCase());
+            return keys.some(k => k.toLowerCase() === name.toLowerCase());
+        }
+
+        function updateMaterialOptions() {
+            const select = document.getElementById('material');
+            select.innerHTML = '';
+            Object.keys(inventory).forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.textContent = name; select.appendChild(opt); });
+        }
+        function updateBorrowMaterialOptions() {
+            const select = document.getElementById('borrowMaterial');
+            select.innerHTML = '';
+            Object.keys(inventory).forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.textContent = name; select.appendChild(opt); });
+        }
+
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            const btn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+            if (btn) btn.classList.add('active');
+        };
+        window.setType = function(type) {
+            if (!isAdmin) return;
+            currentType = type;
+            document.querySelectorAll('#register .type-btn').forEach(b => {
+                b.classList.remove('active-out', 'active-in');
+                if (b.dataset.type === type) b.classList.add(type === 'out' ? 'active-out' : 'active-in');
+            });
+        };
+        window.setBorrowType = function(type) {
+            if (!isAdmin) return;
+            currentBorrowType = type;
+            document.querySelectorAll('#borrow .type-btn').forEach(b => {
+                b.classList.remove('active-borrow', 'active-return');
+                if (b.dataset.type === type) b.classList.add(type === 'borrow' ? 'active-borrow' : 'active-return');
+            });
+            const t = translations[currentLang] || translations.ar;
+            document.getElementById('borrowSubmitBtn').textContent = type === 'borrow' ? (t.btnBorrowSubmit || '🚨 تسجيل استعارة') : (t.btnReturnSubmit || '⬅️ تسجيل إرجاع');
+        };
+
+        // ===================== Forms =====================
+        window.submitForm = async function(e) {
+            e.preventDefault();
+            if (!isAdmin) { showToast('⚠️ فقط المشرفون.', 'error'); return; }
+            const material = document.getElementById('material').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const employee = document.getElementById('employee').value;
+            const date = document.getElementById('date').value;
+            if (!quantity || !employee) { showToast('⚠️ املأ جميع الحقول.', 'error'); return; }
+            if (currentType === 'out') {
+                if (inventory[material].qty < quantity) { showToast(`⚠️ الكمية غير كافية! المتوفر: ${inventory[material].qty}`, 'error'); return; }
+                inventory[material].qty -= quantity;
+            } else { inventory[material].qty += quantity; }
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            const entry = { id: Date.now(), material, qty: currentType === 'out' ? -quantity : quantity, employee, date, type: currentType, section: 'office' };
+            history.push(entry);
+            localStorage.setItem('history', JSON.stringify(history));
+            debounceUpdate();
+            scheduleSync();
+            document.getElementById('quantity').value = '';
+            document.getElementById('employee').value = '';
+            showToast(`✅ تم تسجيل ${currentType === 'out' ? 'الصرف' : 'الإضافة'} بنجاح!`, 'success');
+        };
+
+        window.submitBorrowForm = async function(e) {
+            e.preventDefault();
+            if (!isAdmin) { showToast('⚠️ فقط المشرفون.', 'error'); return; }
+            const material = document.getElementById('borrowMaterial').value;
+            const quantity = parseInt(document.getElementById('borrowQuantity').value);
+            const employee = document.getElementById('borrowEmployee').value;
+            const note = document.getElementById('borrowNote').value;
+            const date = document.getElementById('borrowDate').value;
+            if (!quantity || !employee) { showToast('⚠️ املأ جميع الحقول.', 'error'); return; }
+            if (currentBorrowType === 'borrow') {
+                if (inventory[material].qty < quantity) { showToast(`⚠️ الكمية غير كافية! المتوفر: ${inventory[material].qty}`, 'error'); return; }
+                inventory[material].qty -= quantity;
+                inventory[material].borrowed = (inventory[material].borrowed || 0) + quantity;
+                const entry = { id: Date.now(), material, qty: quantity, employee, date, type: 'borrow', section: 'office', note: note || 'استعارة' };
+                borrowHistory.push(entry); history.push(entry);
+                showToast(`✅ تم تسجيل استعارة ${quantity} من ${material}`, 'success');
+            } else {
+                if ((inventory[material].borrowed || 0) < quantity) { showToast(`⚠️ الكمية المستعارة غير كافية! المستعار: ${inventory[material].borrowed || 0}`, 'error'); return; }
+                inventory[material].qty += quantity;
+                inventory[material].borrowed = (inventory[material].borrowed || 0) - quantity;
+                const entry = { id: Date.now(), material, qty: quantity, employee, date, type: 'return', section: 'office', note: note || 'إرجاع' };
+                borrowHistory.push(entry); history.push(entry);
+                showToast(`✅ تم تسجيل إرجاع ${quantity} من ${material}`, 'success');
+            }
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            localStorage.setItem('history', JSON.stringify(history));
+            localStorage.setItem('borrowHistory', JSON.stringify(borrowHistory));
+            debounceUpdate();
+            scheduleSync();
+            document.getElementById('borrowQuantity').value = '';
+            document.getElementById('borrowEmployee').value = '';
+            document.getElementById('borrowNote').value = '';
+        };
+
+        // ===================== Material Management =====================
+        window.previewImage = function(input, previewId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(previewId);
+                    img.src = e.target.result; img.classList.add('visible'); img.style.display = 'block';
+                    const emptyId = previewId.replace('preview', 'empty');
+                    const empty = document.getElementById(emptyId);
+                    if (empty) empty.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        window.previewEditImage = function(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) { const img = document.getElementById('editPreview'); img.src = e.target.result; img.style.display = 'block'; };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        window.addOfficeMaterial = function() {
+            if (!isAdmin) { showToast('⚠️ فقط المشرفون.', 'error'); return; }
+            const ar = document.getElementById('newOfficeAr').value.trim();
+            const fr = document.getElementById('newOfficeFr').value.trim();
+            const en = document.getElementById('newOfficeEn').value.trim();
+            const unit = document.getElementById('newOfficeUnit').value.trim() || 'قطعة';
+            const previewImg = document.getElementById('previewOffice');
+            const imgData = (previewImg.style.display !== 'none' && previewImg.src) ? previewImg.src : '';
+            if (!ar && !fr && !en) { showToast('⚠️ أدخل الاسم.', 'error'); return; }
+            const key = ar || fr || en;
+            if (isDuplicateName(key)) { showToast(`⚠️ "${key}" موجودة مسبقاً.`, 'error'); return; }
+            inventory[key] = { qty: 0, unit, borrowed: 0, section: 'office', ar: ar || key, fr: fr || key, en: en || key, img: imgData };
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            updateMaterialOptions(); updateBorrowMaterialOptions(); debounceUpdate(); scheduleSync();
+            showToast(`✅ تم إضافة "${key}"`, 'success');
+            document.getElementById('newOfficeAr').value = ''; document.getElementById('newOfficeFr').value = ''; document.getElementById('newOfficeEn').value = ''; document.getElementById('newOfficeUnit').value = '';
+            document.getElementById('previewOffice').style.display = 'none'; document.getElementById('previewOffice').classList.remove('visible'); document.getElementById('emptyOffice').style.display = 'flex';
+        };
+
+        window.openEditModal = function(key, section) {
+            if (!isAdmin) return;
+            const data = inventory[key]; if (!data) return;
+            document.getElementById('editKey').value = key; document.getElementById('editSection').value = section;
+            document.getElementById('editAr').value = data.ar || key; document.getElementById('editFr').value = data.fr || key; document.getElementById('editEn').value = data.en || key; document.getElementById('editUnit').value = data.unit || '';
+            const preview = document.getElementById('editPreview');
+            if (data.img) { preview.src = data.img; preview.style.display = 'block'; } else { preview.style.display = 'none'; }
+            document.getElementById('editModal').classList.add('active');
+        };
+        window.closeModal = function() { document.getElementById('editModal').classList.remove('active'); };
+
+        window.saveEdit = function() {
+            if (!isAdmin) return;
+            const oldKey = document.getElementById('editKey').value;
+            const ar = document.getElementById('editAr').value.trim(); const fr = document.getElementById('editFr').value.trim(); const en = document.getElementById('editEn').value.trim(); const unit = document.getElementById('editUnit').value.trim();
+            const previewImg = document.getElementById('editPreview');
+            const newImg = (previewImg.style.display !== 'none' && previewImg.src && !previewImg.src.includes(window.location.href)) ? previewImg.src : undefined;
+            if (!inventory[oldKey]) return;
+            const newKey = ar || fr || en || oldKey;
+            if (newKey !== oldKey && isDuplicateName(newKey, oldKey)) { showToast(`⚠️ "${newKey}" موجودة.`, 'error'); return; }
+            if (newKey !== oldKey) {
+                inventory[newKey] = { ...inventory[oldKey], ar, fr, en, unit };
+                if (newImg !== undefined) inventory[newKey].img = newImg;
+                delete inventory[oldKey];
+                history.forEach(h => { if (h.material === oldKey) h.material = newKey; });
+                borrowHistory.forEach(h => { if (h.material === oldKey) h.material = newKey; });
+            } else {
+                inventory[oldKey].ar = ar; inventory[oldKey].fr = fr; inventory[oldKey].en = en; inventory[oldKey].unit = unit;
+                if (newImg !== undefined) inventory[oldKey].img = newImg;
+            }
+            localStorage.setItem('inventory', JSON.stringify(inventory)); localStorage.setItem('history', JSON.stringify(history)); localStorage.setItem('borrowHistory', JSON.stringify(borrowHistory));
+            closeModal(); updateMaterialOptions(); updateBorrowMaterialOptions(); debounceUpdate(); scheduleSync();
+            showToast('✅ تم حفظ التعديلات.', 'success');
+        };
+
+        window.deleteMaterial = function(key, section) {
+            if (!isAdmin) { showToast('⚠️ فقط المشرفون.', 'error'); return; }
+            const t = translations[currentLang] || translations.ar;
+            if (!confirm(t.confirmDelete)) return;
+            delete inventory[key];
+            history = history.filter(h => h.material !== key);
+            borrowHistory = borrowHistory.filter(h => h.material !== key);
+            localStorage.setItem('inventory', JSON.stringify(inventory)); localStorage.setItem('history', JSON.stringify(history)); localStorage.setItem('borrowHistory', JSON.stringify(borrowHistory));
+            updateMaterialOptions(); updateBorrowMaterialOptions(); debounceUpdate(); scheduleSync();
+            showToast(`🗑️ تم حذف "${key}".`, 'info');
+        };
+
+        // ===================== Export / Import =====================
+        window.exportData = function() {
+            const data = { inventory, history, borrowHistory, exportedAt: new Date().toISOString(), version: '1.0' };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'warehouse-backup-' + new Date().toISOString().split('T')[0] + '.json';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            showToast('✅ تم تصدير البيانات.', 'success');
+        };
+        window.importData = function() { document.getElementById('importFile').click(); };
+        window.handleImport = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.inventory) inventory = data.inventory;
+                    if (data.history) history = data.history;
+                    if (data.borrowHistory) borrowHistory = data.borrowHistory;
+                    localStorage.setItem('inventory', JSON.stringify(inventory)); localStorage.setItem('history', JSON.stringify(history)); localStorage.setItem('borrowHistory', JSON.stringify(borrowHistory));
+                    if (cloudEnabled) await syncToCloud();
+                    updateMaterialOptions(); updateBorrowMaterialOptions(); fullUpdateUI();
+                    showToast('✅ تم استيراد البيانات.', 'success');
+                } catch (err) { showToast('❌ خطأ في JSON: ' + err.message, 'error'); }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        };
+
+        // ===================== Language =====================
+        window.setLang = function(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + lang).classList.add('active');
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang === 'ar' ? 'ar' : (lang === 'fr' ? 'fr' : 'en');
+            const t = translations[lang];
+            if (t) {
+                document.querySelectorAll('[data-key]').forEach(el => {
+                    const key = el.getAttribute('data-key');
+                    if (t[key]) el.textContent = t[key];
+                });
+                document.getElementById('appTitle').textContent = t.appTitle;
+                document.getElementById('appSubtitle').textContent = t.appSubtitle;
+                const borrowBtn = document.getElementById('borrowSubmitBtn');
+                if (borrowBtn) borrowBtn.textContent = currentBorrowType === 'borrow' ? (t.btnBorrowSubmit || '🚨 تسجيل استعارة') : (t.btnReturnSubmit || '⬅️ تسجيل إرجاع');
+            }
+            fullUpdateUI();
+        };
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = now.toLocaleString(currentLang === 'ar' ? 'ar-SA' : (currentLang === 'fr' ? 'fr-FR' : 'en-US'));
+        }
+
+        // ===================== Load Data =====================
+        async function loadData() {
+            const saved = localStorage.getItem('inventory');
+            if (saved) inventory = JSON.parse(saved);
+            else { inventory = JSON.parse(JSON.stringify(defaultOffice)); localStorage.setItem('inventory', JSON.stringify(inventory)); }
+            const savedHistory = localStorage.getItem('history');
+            if (savedHistory) history = JSON.parse(savedHistory);
+            else { history = []; localStorage.setItem('history', JSON.stringify(history)); }
+            const savedBorrow = localStorage.getItem('borrowHistory');
+            if (savedBorrow) borrowHistory = JSON.parse(savedBorrow);
+            else { borrowHistory = []; localStorage.setItem('borrowHistory', JSON.stringify(borrowHistory)); }
+
+            if (cloudEnabled) {
+                const loaded = await loadFromCloud();
+                if (!loaded) await syncToCloud();
+            } else { updateSyncStatus('offline', '#FFA500'); }
+
+            updateMaterialOptions(); updateBorrowMaterialOptions(); fullUpdateUI();
+        }
+
+        // ===================== Init =====================
+        async function initApp() {
+            checkAuth();
+            await loadData();
+            updateTime();
+            setInterval(updateTime, 1000);
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            document.getElementById('borrowDate').value = today;
+
+            if (cloudEnabled && db) {
+                onSnapshot(doc(db, "warehouse", "data"), (snap) => {
+                    // منع الحلقة: تجاهل التغييرات المحلية المعلقة
+                    if (snap.metadata.hasPendingWrites) return;
+                    if (snap.exists() && !isSyncing) {
+                        const data = snap.data();
+                        let changed = false;
+                        if (data.inventory && Object.keys(data.inventory).length > 0) {
+                            inventory = data.inventory;
+                            localStorage.setItem('inventory', JSON.stringify(inventory));
+                            changed = true;
+                        }
+                        if (data.history) {
+                            history = data.history;
+                            localStorage.setItem('history', JSON.stringify(history));
+                            changed = true;
+                        }
+                        if (data.borrowHistory) {
+                            borrowHistory = data.borrowHistory;
+                            localStorage.setItem('borrowHistory', JSON.stringify(borrowHistory));
+                            changed = true;
+                        }
+                        if (changed) {
+                            updateMaterialOptions();
+                            updateBorrowMaterialOptions();
+                            fullUpdateUI();
+                        }
+                        updateSyncStatus('online', '#51CF66');
+                    }
+                }, (err) => {
+                    console.error("Snapshot error:", err);
+                    updateSyncStatus('offline', '#FFA500');
+                });
+            }
+
+            showAdminControls(isAdmin);
+            if (!isAdmin) showToast('👋 مرحباً! سجل الدخول للتحكم الكامل.', 'info', 5000);
+        }
+
+        window.addEventListener('load', initApp);
+    </script>
+</body>
+</html>
