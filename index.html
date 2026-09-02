@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📝 Smart Warehouse | إدارة المخزون</title>
     <style>
-        /* (نفس الأنماط السابقة – مع إضافات البحث والتحسينات) */
+        /* (نفس الأنماط السابقة – لم تتغير) */
         :root {
             --primary: #4a5568;
             --secondary: #2d3748;
@@ -267,7 +267,7 @@
         .material-list { display: grid; gap: 0.75rem; }
         .material-row {
             display: grid;
-            grid-template-columns: 50px 1fr 1fr 1fr 60px 60px 60px 60px;
+            grid-template-columns: 50px 1fr 1fr 1fr 60px 60px 60px;
             gap: 6px; align-items: center; padding: 0.6rem;
             background: #FAFAFA; border-radius: 8px; border: 1px solid #eee;
         }
@@ -344,59 +344,6 @@
         }
         .logout-btn:hover { background: rgba(255,255,255,0.3); }
 
-        /* تحسينات البحث والفلترة */
-        .filter-bar {
-            display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 1rem;
-            background: #f8f9ff; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid #e2e8f0;
-        }
-        .filter-bar label { font-weight: bold; color: #4a5568; font-size: 14px; }
-        .filter-bar input, .filter-bar select {
-            padding: 6px 12px; border-radius: 6px; border: 2px solid #ddd;
-            font-size: 14px; background: white; min-width: 150px;
-        }
-        .filter-bar input:focus, .filter-bar select:focus {
-            outline: none; border-color: #4a5568;
-        }
-        .filter-bar .search-container {
-            display: flex; gap: 6px; flex: 1; flex-wrap: wrap; align-items: center;
-        }
-        .filter-bar .search-container input { flex: 1; min-width: 120px; }
-        .filter-bar .search-container .search-btn {
-            background: #4a5568; color: white; border: none; padding: 6px 14px;
-            border-radius: 6px; cursor: pointer; font-size: 14px; transition: background 0.2s;
-        }
-        .filter-bar .search-container .search-btn:hover { background: #2d3748; }
-
-        /* ترقيم الصفحات */
-        .pagination {
-            display: flex; gap: 6px; justify-content: center; align-items: center;
-            margin-top: 1rem; flex-wrap: wrap;
-        }
-        .pagination button {
-            padding: 6px 14px; border-radius: 6px; border: 1px solid #ddd;
-            background: white; cursor: pointer; font-size: 14px; transition: all 0.2s;
-        }
-        .pagination button:hover { background: #f0f0f0; }
-        .pagination button.active { background: #4a5568; color: white; border-color: #4a5568; }
-        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* إدارة الفئات */
-        .category-manager {
-            display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-            background: #f0f4ff; padding: 8px 12px; border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .category-manager .cat-tag {
-            background: white; padding: 4px 12px; border-radius: 16px;
-            border: 1px solid #4a5568; display: flex; align-items: center; gap: 6px;
-            font-size: 13px;
-        }
-        .category-manager .cat-tag .del-cat {
-            background: none; border: none; color: #FF6B6B; cursor: pointer;
-            font-size: 14px; padding: 0 2px;
-        }
-        .category-manager .cat-tag .del-cat:hover { color: #E53935; }
-
         @media (max-width: 600px) {
             .header h1 { font-size: 20px; }
             .logo-container { padding: 12px 16px; border-radius: 12px; }
@@ -408,7 +355,7 @@
             table { font-size: 12px; }
             table th, table td { padding: 0.5rem; }
             .material-row { 
-                grid-template-columns: 40px 1fr 50px 50px 50px; 
+                grid-template-columns: 40px 1fr 50px 50px; 
                 gap: 4px; padding: 0.5rem;
             }
             .material-row input:nth-child(3), .material-row input:nth-child(4) { display: none; }
@@ -420,9 +367,6 @@
             .lang-bar-left { justify-content: center; }
             .lang-bar-right { justify-content: center; }
             .signature-top { font-size: 12px; }
-            .filter-bar { flex-direction: column; align-items: stretch; }
-            .filter-bar input { min-width: auto; }
-            .category-manager { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
@@ -489,27 +433,10 @@
             <button class="tab-btn" data-tab="history" onclick="switchTab('history')" data-key="tabHistory">📵 التاريخ</button>
             <button class="tab-btn" data-tab="manage" onclick="switchTab('manage')" data-key="tabManage">⚙️ إدارة المواد</button>
         </div>
-
-        <!-- Dashboard -->
         <div id="dashboard" class="tab-content active">
             <div id="alertBox"></div>
-            <div class="card">
-                <h2 data-key="dashOffice">📳 حالة المخزون - Bureau</h2>
-                <div class="filter-bar">
-                    <div class="search-container">
-                        <label for="dashboardSearch">🔍 بحث:</label>
-                        <input type="text" id="dashboardSearch" placeholder="ابحث بالاسم أو الفئة..." oninput="debounceSearch(updateDashboard)" onkeydown="if(event.key==='Enter') updateDashboard()">
-                        <button class="search-btn" onclick="updateDashboard()">🔍 بحث</button>
-                    </div>
-                    <label for="dashboardCategoryFilter">📂 الفئة:</label>
-                    <select id="dashboardCategoryFilter" onchange="updateDashboard()"></select>
-                    <span id="dashboardResultCount" style="font-size:13px;color:#666;"></span>
-                </div>
-                <div class="inventory-grid" id="dashboardGrid"></div>
-            </div>
+            <div class="card"><h2 data-key="dashOffice">📳 حالة المخزون - Bureau</h2><div class="inventory-grid" id="dashboardGrid"></div></div>
         </div>
-
-        <!-- Register -->
         <div id="register" class="tab-content">
             <div class="card">
                 <h2 style="text-align: center;" data-key="quickReg">⚡ تسجيل عملية</h2>
@@ -529,28 +456,14 @@
                 </form>
             </div>
         </div>
-
-        <!-- Inventory -->
         <div id="inventory" class="tab-content">
             <div class="card">
                 <h2 data-key="invOffice">📝 تفاصيل المخزون - Bureau</h2>
-                <div class="filter-bar">
-                    <div class="search-container">
-                        <label for="inventorySearch">🔍 بحث:</label>
-                        <input type="text" id="inventorySearch" placeholder="ابحث بالاسم أو الفئة..." oninput="debounceSearch(updateInventoryTable)" onkeydown="if(event.key==='Enter') updateInventoryTable()">
-                        <button class="search-btn" onclick="updateInventoryTable()">🔍 بحث</button>
-                    </div>
-                    <label for="inventoryCategoryFilter">📂 الفئة:</label>
-                    <select id="inventoryCategoryFilter" onchange="updateInventoryTable()"></select>
-                    <span id="inventoryResultCount" style="font-size:13px;color:#666;"></span>
-                </div>
                 <div class="table-wrapper">
                     <table><thead><tr><th data-key="thMaterial">المادة</th><th data-key="thQty">الكمية</th><th data-key="thStatus">الحالة</th><th data-key="thBorrowed">المستعار</th></tr></thead><tbody id="inventoryTable"></tbody></table>
                 </div>
             </div>
         </div>
-
-        <!-- Borrow -->
         <div id="borrow" class="tab-content">
             <div class="card">
                 <h2 style="text-align: center;" data-key="borrowTitle">🚨 نظام الاستعارة والإرجاع</h2>
@@ -570,13 +483,8 @@
                     <button type="submit" class="submit-btn" id="borrowSubmitBtn" data-key="btnBorrowSubmit">🚨 تسجيل استعارة</button>
                 </form>
             </div>
-            <div class="card"><h2 data-key="borrowHistory">📵 سجل الاستعارات</h2>
-                <div class="history-list" id="borrowHistoryList"></div>
-                <div class="pagination" id="borrowPagination"></div>
-            </div>
+            <div class="card"><h2 data-key="borrowHistory">📵 سجل الاستعارات</h2><div class="history-list" id="borrowHistoryList"></div></div>
         </div>
-
-        <!-- History -->
         <div id="history" class="tab-content">
             <div class="card">
                 <h2 data-key="empStatsTitle">📊 إحصائيات الموظفين</h2>
@@ -594,13 +502,8 @@
                     </table>
                 </div>
             </div>
-            <div class="card"><h2 data-key="historyTitle">📵 سجل العمليات</h2>
-                <div class="history-list" id="historyList"></div>
-                <div class="pagination" id="historyPagination"></div>
-            </div>
+            <div class="card"><h2 data-key="historyTitle">📵 سجل العمليات</h2><div class="history-list" id="historyList"></div></div>
         </div>
-
-        <!-- Manage -->
         <div id="manage" class="tab-content">
             <div class="card">
                 <h2>⚙️ <span data-key="manageTitle">إدارة المواد</span></h2>
@@ -611,15 +514,6 @@
                         <div class="form-group"><label data-key="nameFr">الاسم بالفرنسية</label><input type="text" id="newOfficeFr" placeholder="ex: Stylos rouges"></div>
                         <div class="form-group"><label data-key="nameEn">الاسم بالإنجليزية</label><input type="text" id="newOfficeEn" placeholder="ex: Red pens"></div>
                         <div class="form-group"><label data-key="unit">الوحدة</label><input type="text" id="newOfficeUnit" placeholder="قطعة / kg / L"></div>
-                        <div class="form-group">
-                            <label data-key="category">الفئة</label>
-                            <select id="newOfficeCategory"></select>
-                            <div style="display:flex; gap:8px; margin-top:4px; flex-wrap:wrap;">
-                                <input type="text" id="newCategoryInput" placeholder="أضف فئة جديدة" style="flex:1;padding:6px 10px;border:2px solid #ddd;border-radius:6px;min-width:120px;">
-                                <button class="btn-success" onclick="addNewCategory()" style="padding:6px 12px;font-size:13px;">➕</button>
-                            </div>
-                            <div class="category-manager" id="categoryManager"></div>
-                        </div>
                         <div class="form-group">
                             <label data-key="image">الصورة</label>
                             <div style="display:flex; gap:12px; align-items:center;">
@@ -643,7 +537,6 @@
                                 <button class="lang-btn" style="color:#2d3748; border-color:#ddd;" onclick="exportInventoryExcel()" title="تصدير قائمة المواد إلى Excel">📊 تصدير Excel</button>
                                 <button class="lang-btn" style="color:#2d3748; border-color:#ddd;" onclick="document.getElementById('importExcelFile').click()" title="استيراد/تحديث المواد من Excel">📥 استيراد Excel</button>
                                 <input type="file" id="importExcelFile" style="display:none" accept=".xlsx,.xls,.csv" onchange="handleImportExcel(event)">
-                                <button class="btn-secondary" onclick="updateCategoryFilters(); updateManageList();" style="font-size:12px;">🔄 تحديث الفئات</button>
                             </div>
                         </div>
                         <div class="material-list" id="officeMaterialsList"></div>
@@ -651,7 +544,6 @@
                 </div>
             </div>
         </div>
-
         <div class="footer">
             <p>MAPA İNŞAAT ve TİCARET A.Ş. | <span data-key="footerText">نظام مخزون ذكي | التحديث تلقائي</span> | <span id="lastUpdate"></span></p>
             <p class="signature">✨ By Youcef.B</p>
@@ -669,10 +561,6 @@
                 <div class="form-group"><label data-key="nameFr">الاسم بالفرنسية</label><input type="text" id="editFr"></div>
                 <div class="form-group"><label data-key="nameEn">الاسم بالإنجليزية</label><input type="text" id="editEn"></div>
                 <div class="form-group"><label data-key="unit">الوحدة</label><input type="text" id="editUnit"></div>
-                <div class="form-group">
-                    <label data-key="category">الفئة</label>
-                    <select id="editCategory"></select>
-                </div>
                 <div class="form-group">
                     <label data-key="image">الصورة</label>
                     <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
@@ -708,38 +596,38 @@
 
         // ===================== قائمة المواد الافتراضية =====================
         const defaultOffice = {
-            'marqueur black': { qty: 43, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'marqueur black', fr: 'Marqueur noir', en: 'Black marker', img: '' },
-            'baguette a relier': { qty: 7, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'baguette a relier', fr: 'Baguette à relier', en: 'Binding rod', img: '' },
-            'قلم التظهير': { qty: 4, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'قلم التظهير', fr: 'Surligneur', en: 'Highlighter', img: '' },
-            'graveuse': { qty: 1, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'graveuse', fr: 'Agrafeuse', en: 'Stapler', img: '' },
-            'مقص': { qty: 2, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'مقص', fr: 'Ciseaux', en: 'Scissors', img: '' },
-            'agrafes 24/6': { qty: 28, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'agrafes 24/6', fr: 'Agrafes 24/6', en: 'Staples 24/6', img: '' },
-            'CD-R': { qty: 50, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'CD-R', fr: 'CD-R', en: 'CD-R', img: '' },
-            'أقلام حمراء': { qty: 115, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'أقلام حمراء', fr: 'Stylos rouges', en: 'Red pens', img: '' },
-            'pochet CD 2 side': { qty: 400, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'pochet CD 2 side', fr: 'Pochette CD double face', en: 'CD sleeve double side', img: '' },
-            'marquer blue': { qty: 42, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'marquer blue', fr: 'Marqueur bleu', en: 'Blue marker', img: '' },
-            'papier thermique': { qty: 4, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'papier thermique', fr: 'Papier thermique', en: 'Thermal paper', img: '' },
-            'faceur corection tap 12mx5mm': { qty: 8, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'faceur corection tap 12mx5mm', fr: 'Ruban correcteur 12mx5mm', en: 'Correction tape 12mx5mm', img: '' },
-            'trobone 31mm': { qty: 28, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'trobone 31mm', fr: 'Trombone 31mm', en: 'Paper clip 31mm', img: '' },
-            'ممحاة': { qty: 4, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'ممحاة', fr: 'Gomme', en: 'Eraser', img: '' },
-            'غراء': { qty: 3, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'غراء', fr: 'Colle', en: 'Glue', img: '' },
-            'thermomètre': { qty: 11, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'thermomètre', fr: 'Thermomètre', en: 'Thermometer', img: '' },
-            'gratoire': { qty: 1, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'gratoire', fr: 'Gratoire', en: 'Gratoire', img: '' },
-            'مسطرة': { qty: 6, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'مسطرة', fr: 'Règle', en: 'Ruler', img: '' },
-            'calculator': { qty: 3, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'calculator', fr: 'Calculatrice', en: 'Calculator', img: '' },
-            'papier': { qty: 0, unit: 'قدعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'papier', fr: 'papier', en: 'papier', img: '' },
-            'sticky notes': { qty: 22, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'sticky notes', fr: 'Sticky notes', en: 'Sticky notes', img: '' },
-            'toneure hp': { qty: 0, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'toneure hp', fr: 'Toner HP', en: 'HP toner', img: '' },
-            'مشابك أوراق': { qty: 1, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'مشابك أوراق', fr: 'Pince à double clip', en: 'Paper clips', img: '' },
-            'أقلام زرقاء': { qty: 214, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'أقلام زرقاء', fr: 'Stylos bleus', en: 'Blue pens', img: '' },
-            'شريط لاصق شفاف': { qty: 7, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'شريط لاصق شفاف', fr: 'Ruban adhésif transparent', en: 'Transparent tape', img: '' },
-            'toneur canon': { qty: 4, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'toneur canon', fr: 'Toner Canon', en: 'Canon toner', img: '' },
-            'أقلام سوداء': { qty: 37, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'أقلام سوداء', fr: 'Stylos noirs', en: 'Black pens', img: '' },
-            'tronone 28mm': { qty: 16, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'tronone 28mm', fr: 'Trombone 28mm', en: 'Paper clip 28mm', img: '' },
-            'kiteur': { qty: 1, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'kiteur', fr: 'Kiteur', en: 'Kiteur', img: '' },
-            'DVD-R': { qty: 50, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'DVD-R', fr: 'DVD-R', en: 'DVD-R', img: '' },
-            'grave 31/19': { qty: 2, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'grave 31/19', fr: 'Agrafe 31/19', en: 'Staple 31/19', img: '' },
-            'قلم الرصاص': { qty: 44, unit: 'قطعة', borrowed: 0, section: 'office', category: 'مكتبية', ar: 'قلم الرصاص', fr: 'Crayon à papier', en: 'Pencil', img: '' }
+            'marqueur black': { qty: 43, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'marqueur black', fr: 'Marqueur noir', en: 'Black marker', img: '' },
+            'baguette a relier': { qty: 7, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'baguette a relier', fr: 'Baguette à relier', en: 'Binding rod', img: '' },
+            'قلم التظهير': { qty: 4, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'قلم التظهير', fr: 'Surligneur', en: 'Highlighter', img: '' },
+            'graveuse': { qty: 1, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'graveuse', fr: 'Agrafeuse', en: 'Stapler', img: '' },
+            'مقص': { qty: 2, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'مقص', fr: 'Ciseaux', en: 'Scissors', img: '' },
+            'agrafes 24/6': { qty: 28, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'agrafes 24/6', fr: 'Agrafes 24/6', en: 'Staples 24/6', img: '' },
+            'CD-R': { qty: 50, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'CD-R', fr: 'CD-R', en: 'CD-R', img: '' },
+            'أقلام حمراء': { qty: 115, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'أقلام حمراء', fr: 'Stylos rouges', en: 'Red pens', img: '' },
+            'pochet CD 2 side': { qty: 400, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'pochet CD 2 side', fr: 'Pochette CD double face', en: 'CD sleeve double side', img: '' },
+            'marquer blue': { qty: 42, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'marquer blue', fr: 'Marqueur bleu', en: 'Blue marker', img: '' },
+            'papier thermique': { qty: 4, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'papier thermique', fr: 'Papier thermique', en: 'Thermal paper', img: '' },
+            'faceur corection tap 12mx5mm': { qty: 8, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'faceur corection tap 12mx5mm', fr: 'Ruban correcteur 12mx5mm', en: 'Correction tape 12mx5mm', img: '' },
+            'trobone 31mm': { qty: 28, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'trobone 31mm', fr: 'Trombone 31mm', en: 'Paper clip 31mm', img: '' },
+            'ممحاة': { qty: 4, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'ممحاة', fr: 'Gomme', en: 'Eraser', img: '' },
+            'غراء': { qty: 3, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'غراء', fr: 'Colle', en: 'Glue', img: '' },
+            'thermomètre': { qty: 11, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'thermomètre', fr: 'Thermomètre', en: 'Thermometer', img: '' },
+            'gratoire': { qty: 1, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'gratoire', fr: 'Gratoire', en: 'Gratoire', img: '' },
+            'مسطرة': { qty: 6, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'مسطرة', fr: 'Règle', en: 'Ruler', img: '' },
+            'calculator': { qty: 3, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'calculator', fr: 'Calculatrice', en: 'Calculator', img: '' },
+            'papier': { qty: 0, unit: 'قدعة', borrowed: 0, section: 'office', ar: 'papier', fr: 'papier', en: 'papier', img: '' },
+            'sticky notes': { qty: 22, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'sticky notes', fr: 'Sticky notes', en: 'Sticky notes', img: '' },
+            'toneure hp': { qty: 0, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'toneure hp', fr: 'Toner HP', en: 'HP toner', img: '' },
+            'مشابك أوراق': { qty: 1, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'مشابك أوراق', fr: 'Pince à double clip', en: 'Paper clips', img: '' },
+            'أقلام زرقاء': { qty: 214, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'أقلام زرقاء', fr: 'Stylos bleus', en: 'Blue pens', img: '' },
+            'شريط لاصق شفاف': { qty: 7, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'شريط لاصق شفاف', fr: 'Ruban adhésif transparent', en: 'Transparent tape', img: '' },
+            'toneur canon': { qty: 4, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'toneur canon', fr: 'Toner Canon', en: 'Canon toner', img: '' },
+            'أقلام سوداء': { qty: 37, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'أقلام سوداء', fr: 'Stylos noirs', en: 'Black pens', img: '' },
+            'tronone 28mm': { qty: 16, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'tronone 28mm', fr: 'Trombone 28mm', en: 'Paper clip 28mm', img: '' },
+            'kiteur': { qty: 1, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'kiteur', fr: 'Kiteur', en: 'Kiteur', img: '' },
+            'DVD-R': { qty: 50, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'DVD-R', fr: 'DVD-R', en: 'DVD-R', img: '' },
+            'grave 31/19': { qty: 2, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'grave 31/19', fr: 'Agrafe 31/19', en: 'Staple 31/19', img: '' },
+            'قلم الرصاص': { qty: 44, unit: 'قطعة', borrowed: 0, section: 'office', ar: 'قلم الرصاص', fr: 'Crayon à papier', en: 'Pencil', img: '' }
         };
 
         const translations = {
@@ -793,7 +681,6 @@
                 nameFr: "الاسم بالفرنسية",
                 nameEn: "الاسم بالإنجليزية",
                 unit: "الوحدة",
-                category: "الفئة",
                 image: "الصورة",
                 chooseImg: "اختر صورة",
                 changeImg: "تغيير الصورة",
@@ -818,15 +705,7 @@
                 borrowHistory: "📵 سجل الاستعارات",
                 borrowSuccess: "✅ تم تسجيل الاستعارة بنجاح!",
                 returnSuccess: "✅ تم تسجيل الإرجاع بنجاح!",
-                noBorrowHistory: "لا توجد استعارات مسجلة",
-                categoryAdded: "✅ تم إضافة الفئة \"{cat}\"",
-                categoryDeleted: "🗑️ تم حذف الفئة \"{cat}\"",
-                categoryExists: "⚠️ الفئة \"{cat}\" موجودة مسبقاً.",
-                enterCategoryName: "⚠️ أدخل اسم الفئة.",
-                confirmDeleteCategory: "هل تريد حذف الفئة \"{cat}\"؟ (سيتم إزالتها من جميع المواد المرتبطة بها)",
-                imagePreserved: "🖼️ تم الاحتفاظ بالصورة القديمة",
-                searchPlaceholder: "ابحث بالاسم أو الفئة...",
-                noResults: "لا توجد نتائج"
+                noBorrowHistory: "لا توجد استعارات مسجلة"
             },
             fr: {
                 appTitle: "📝 Entrepôt Stylos & Papier",
@@ -878,7 +757,6 @@
                 nameFr: "Nom en Français",
                 nameEn: "Nom en Anglais",
                 unit: "Unité",
-                category: "Catégorie",
                 image: "Image",
                 chooseImg: "Choisir image",
                 changeImg: "Changer image",
@@ -903,15 +781,7 @@
                 borrowHistory: "📵 Historique des emprunts",
                 borrowSuccess: "✅ Emprunt enregistré avec succès!",
                 returnSuccess: "✅ Retour enregistré avec succès!",
-                noBorrowHistory: "Aucun emprunt enregistré",
-                categoryAdded: "✅ Catégorie \"{cat}\" ajoutée",
-                categoryDeleted: "🗑️ Catégorie \"{cat}\" supprimée",
-                categoryExists: "⚠️ La catégorie \"{cat}\" existe déjà.",
-                enterCategoryName: "⚠️ Entrez le nom de la catégorie.",
-                confirmDeleteCategory: "Supprimer la catégorie \"{cat}\" ? (Retirée de tous les matériaux associés)",
-                imagePreserved: "🖼️ Ancienne image conservée",
-                searchPlaceholder: "Rechercher par nom ou catégorie...",
-                noResults: "Aucun résultat"
+                noBorrowHistory: "Aucun emprunt enregistré"
             },
             en: {
                 appTitle: "📝 Pens & Paper Warehouse",
@@ -963,7 +833,6 @@
                 nameFr: "Name in French",
                 nameEn: "Name in English",
                 unit: "Unit",
-                category: "Category",
                 image: "Image",
                 chooseImg: "Choose image",
                 changeImg: "Change image",
@@ -988,15 +857,7 @@
                 borrowHistory: "📵 Borrow History",
                 borrowSuccess: "✅ Borrow registered successfully!",
                 returnSuccess: "✅ Return registered successfully!",
-                noBorrowHistory: "No borrowings recorded",
-                categoryAdded: "✅ Category \"{cat}\" added",
-                categoryDeleted: "🗑️ Category \"{cat}\" deleted",
-                categoryExists: "⚠️ Category \"{cat}\" already exists.",
-                enterCategoryName: "⚠️ Enter category name.",
-                confirmDeleteCategory: "Delete category \"{cat}\"? (Removed from all associated materials)",
-                imagePreserved: "🖼️ Old image preserved",
-                searchPlaceholder: "Search by name or category...",
-                noResults: "No results"
+                noBorrowHistory: "No borrowings recorded"
             }
         };
 
@@ -1010,11 +871,12 @@
             }
         } catch (e) { console.warn("Firebase init failed:", e); }
 
-        let syncedMaterialSnapshots = {};
+        // حالة المزامنة الذكية: نتتبع ما تم رفعه فعلياً لكل مجموعة، لنكتب فقط
+        // ما تغيّر (وليس كل شيء في كل مرة) — هذا يقلل عدد عمليات الكتابة اليومية
+        // ويبقينا ضمن حصة Firestore المجانية (Spark) دون الحاجة لبطاقة ائتمان.
+        let syncedMaterialSnapshots = {}; // key -> JSON نصي لآخر نسخة تم رفعها
         let syncedHistoryIds = new Set();
         let syncedBorrowIds = new Set();
-        let categories = [];
-        let syncedCategories = new Set();
 
         function sanitizeDocId(str) {
             const s = String(str).trim().replace(/[\/\.#\$\[\]]/g, '_').slice(0, 300);
@@ -1031,11 +893,6 @@
         let syncTimeout = null;
         let isAdmin = false;
         let updateTimeout = null;
-        let currentHistoryPage = 1;
-        let currentBorrowPage = 1;
-        let searchTimeout = null;
-        let debounceUpdateTimeout = null;
-
         // ملاحظة أمنية: كلمة المرور لم تعد مكتوبة كنص صريح في الكود (view-source)،
         // بل نقارن بصمة SHA-256 الخاصة بها. هذا تحسين بسيط فقط وليس حماية كاملة —
         // الحماية الحقيقية تتطلب Firebase Authentication + Security Rules على مستوى المشروع.
@@ -1108,20 +965,6 @@
             localStorage.setItem('inventory', JSON.stringify(inventory));
             localStorage.setItem('history', JSON.stringify(history));
             localStorage.setItem('borrowHistory', JSON.stringify(borrowHistory));
-            localStorage.setItem('categories', JSON.stringify(categories));
-        }
-
-        // ===================== Debounce Functions =====================
-        function debounceSearch(func) {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(func, 300);
-        }
-
-        function debounceUpdate() {
-            clearTimeout(debounceUpdateTimeout);
-            debounceUpdateTimeout = setTimeout(() => {
-                fullUpdateUI();
-            }, 100);
         }
 
         // ===================== Toast =====================
@@ -1136,12 +979,20 @@
         }
         window.showToast = showToast;
 
-        // ===================== Sync =====================
+        // ===================== Sync (بنية جديدة: مستند لكل مادة + مستند لكل عملية) =====================
+        // بدل مستند واحد ضخم يصطدم بحد 1MB في Firestore، نستخدم الآن:
+        //   - مجموعة wh_materials: مستند مستقل لكل مادة (بحدود 1MB لكل مادة بمفردها — لن يصطدم عمليًا)
+        //   - مجموعة wh_history: مستند مستقل لكل عملية إخراج/إدخال (append-only)
+        //   - مجموعة wh_borrowHistory: مستند مستقل لكل عملية استعارة/إرجاع (append-only)
+        // كما أن هذا يقلل عدد عمليات الكتابة (نكتب فقط ما تغيّر فعليًا)، ويبقينا ضمن
+        // خطة Firestore المجانية (Spark) دون الحاجة لبطاقة ائتمان أو Firebase Storage.
         async function syncToCloud() {
             if (!cloudEnabled || !db) return;
             updateSyncStatus('syncing', '#009FE3');
             try {
                 const ops = [];
+
+                // ---- المواد: نكتب فقط ما تغيّر فعلياً + نحذف ما أُزيل محلياً ----
                 const currentKeys = new Set(Object.keys(inventory));
                 Object.keys(syncedMaterialSnapshots).forEach(key => {
                     if (!currentKeys.has(key)) {
@@ -1155,6 +1006,7 @@
                     }
                 });
 
+                // ---- سجل العمليات: إضافة فقط الجديد + حذف ما أُزيل محلياً ----
                 const currentHistoryIds = new Set(history.map(h => String(h.id)));
                 syncedHistoryIds.forEach(id => {
                     if (!currentHistoryIds.has(id)) ops.push({ type: 'delete', ref: doc(db, 'wh_history', id) });
@@ -1164,6 +1016,7 @@
                     if (!syncedHistoryIds.has(idStr)) ops.push({ type: 'set', ref: doc(db, 'wh_history', idStr), data: entry });
                 });
 
+                // ---- سجل الاستعارة: نفس المبدأ ----
                 const currentBorrowIds = new Set(borrowHistory.map(h => String(h.id)));
                 syncedBorrowIds.forEach(id => {
                     if (!currentBorrowIds.has(id)) ops.push({ type: 'delete', ref: doc(db, 'wh_borrowHistory', id) });
@@ -1173,6 +1026,7 @@
                     if (!syncedBorrowIds.has(idStr)) ops.push({ type: 'set', ref: doc(db, 'wh_borrowHistory', idStr), data: entry });
                 });
 
+                // تنفيذ الكتابة على دفعات (حد Firestore: 500 عملية لكل batch)
                 for (let i = 0; i < ops.length; i += 450) {
                     const chunk = ops.slice(i, i + 450);
                     const batch = writeBatch(db);
@@ -1183,6 +1037,7 @@
                     await batch.commit();
                 }
 
+                // تحديث حالة المزامنة المحلية لمنع إعادة كتابة نفس البيانات لاحقًا
                 syncedMaterialSnapshots = {};
                 currentKeys.forEach(key => { syncedMaterialSnapshots[key] = JSON.stringify(inventory[key]); });
                 syncedHistoryIds = currentHistoryIds;
@@ -1218,207 +1073,7 @@
             }, 3000);
         }
 
-        // ===================== وظائف الفئات =====================
-        async function loadCategoriesFromFirebase() {
-            if (!cloudEnabled || !db) {
-                const saved = localStorage.getItem('categories');
-                if (saved) {
-                    try { categories = JSON.parse(saved); } catch(e) { categories = ['مكتبية', 'كهربائية', 'سباكة', 'أخرى']; }
-                } else {
-                    categories = ['مكتبية', 'كهربائية', 'سباكة', 'أخرى'];
-                }
-                syncedCategories = new Set(categories);
-                updateCategorySelects();
-                updateCategoryFilters();
-                renderCategoryManager();
-                return;
-            }
-            try {
-                const snap = await getDocs(collection(db, 'wh_categories'));
-                if (snap.empty) {
-                    const defaultCats = ['مكتبية', 'كهربائية', 'سباكة', 'أخرى'];
-                    const batch = writeBatch(db);
-                    defaultCats.forEach(c => {
-                        const ref = doc(db, 'wh_categories', c);
-                        batch.set(ref, { name: c });
-                    });
-                    await batch.commit();
-                    categories = defaultCats;
-                } else {
-                    categories = [];
-                    snap.forEach(d => categories.push(d.data().name));
-                }
-                categories.sort();
-                syncedCategories = new Set(categories);
-                localStorage.setItem('categories', JSON.stringify(categories));
-                updateCategorySelects();
-                updateCategoryFilters();
-                renderCategoryManager();
-            } catch (e) {
-                console.error("Load categories error:", e);
-                const saved = localStorage.getItem('categories');
-                if (saved) {
-                    try { categories = JSON.parse(saved); } catch(e2) { categories = ['مكتبية', 'كهربائية', 'سباكة', 'أخرى']; }
-                } else {
-                    categories = ['مكتبية', 'كهربائية', 'سباكة', 'أخرى'];
-                }
-                syncedCategories = new Set(categories);
-                updateCategorySelects();
-                updateCategoryFilters();
-                renderCategoryManager();
-            }
-        }
-
-        function listenCategories() {
-            if (!cloudEnabled || !db) return;
-            onSnapshot(collection(db, 'wh_categories'), (snap) => {
-                if (isSyncing) return;
-                const newCats = [];
-                snap.forEach(d => newCats.push(d.data().name));
-                newCats.sort();
-                categories = newCats;
-                syncedCategories = new Set(categories);
-                localStorage.setItem('categories', JSON.stringify(categories));
-                updateCategorySelects();
-                updateCategoryFilters();
-                renderCategoryManager();
-                fullUpdateUI();
-            }, (err) => {
-                console.error("Categories snapshot error:", err);
-            });
-        }
-
-        function updateCategorySelects() {
-            const selectors = ['newOfficeCategory', 'editCategory'];
-            selectors.forEach(id => {
-                const select = document.getElementById(id);
-                if (!select) return;
-                const currentVal = select.value;
-                select.innerHTML = '';
-                categories.forEach(c => {
-                    const opt = document.createElement('option');
-                    opt.value = c;
-                    opt.textContent = c;
-                    select.appendChild(opt);
-                });
-                if (currentVal && categories.includes(currentVal)) select.value = currentVal;
-                else if (categories.length > 0) select.value = categories[0];
-            });
-        }
-
-        function updateCategoryFilters() {
-            const filters = ['dashboardCategoryFilter', 'inventoryCategoryFilter'];
-            filters.forEach(id => {
-                const select = document.getElementById(id);
-                if (!select) return;
-                const currentVal = select.value;
-                select.innerHTML = '';
-                const allOpt = document.createElement('option');
-                allOpt.value = '';
-                const t = translations[currentLang] || translations.ar;
-                allOpt.textContent = currentLang === 'ar' ? 'الكل' : (currentLang === 'fr' ? 'Tous' : 'All');
-                select.appendChild(allOpt);
-                categories.forEach(c => {
-                    const opt = document.createElement('option');
-                    opt.value = c;
-                    opt.textContent = c;
-                    select.appendChild(opt);
-                });
-                if (currentVal && categories.includes(currentVal)) select.value = currentVal;
-            });
-        }
-
-        function renderCategoryManager() {
-            const container = document.getElementById('categoryManager');
-            if (!container) return;
-            container.innerHTML = '';
-            const t = translations[currentLang] || translations.ar;
-            categories.forEach(cat => {
-                const tag = document.createElement('span');
-                tag.className = 'cat-tag';
-                tag.textContent = cat;
-                if (isAdmin) {
-                    const delBtn = document.createElement('button');
-                    delBtn.className = 'del-cat';
-                    delBtn.textContent = '✕';
-                    delBtn.title = 'حذف الفئة';
-                    delBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        deleteCategory(cat);
-                    });
-                    tag.appendChild(delBtn);
-                }
-                container.appendChild(tag);
-            });
-        }
-
-        window.addNewCategory = async function() {
-            const input = document.getElementById('newCategoryInput');
-            const val = input.value.trim();
-            if (!val) { showToast(translations[currentLang].enterCategoryName || '⚠️ أدخل اسم الفئة.', 'error'); return; }
-            if (categories.includes(val)) {
-                const msg = (translations[currentLang].categoryExists || '⚠️ الفئة "{cat}" موجودة مسبقاً.').replace('{cat}', val);
-                showToast(msg, 'error');
-                return;
-            }
-            if (!cloudEnabled || !db) {
-                categories.push(val);
-                categories.sort();
-                syncedCategories.add(val);
-                localStorage.setItem('categories', JSON.stringify(categories));
-                updateCategorySelects();
-                updateCategoryFilters();
-                renderCategoryManager();
-                input.value = '';
-                const msg = (translations[currentLang].categoryAdded || '✅ تم إضافة الفئة "{cat}"').replace('{cat}', val);
-                showToast(msg + ' (محلياً)', 'success');
-                return;
-            }
-            try {
-                const ref = doc(db, 'wh_categories', val);
-                await setDoc(ref, { name: val });
-                input.value = '';
-                const msg = (translations[currentLang].categoryAdded || '✅ تم إضافة الفئة "{cat}"').replace('{cat}', val);
-                showToast(msg, 'success');
-            } catch (e) {
-                showToast('❌ فشل إضافة الفئة: ' + e.message, 'error');
-            }
-        };
-
-        async function deleteCategory(cat) {
-            if (!isAdmin) return;
-            const t = translations[currentLang] || translations.ar;
-            const msg = (t.confirmDeleteCategory || 'هل تريد حذف الفئة "{cat}"؟').replace('{cat}', cat);
-            if (!confirm(msg)) return;
-            const defaultCat = categories.length > 0 ? categories[0] : 'مكتبية';
-            Object.keys(inventory).forEach(key => {
-                if (inventory[key].category === cat) {
-                    inventory[key].category = defaultCat;
-                }
-            });
-            if (cloudEnabled && db) {
-                try {
-                    await deleteDoc(doc(db, 'wh_categories', cat));
-                    const msg2 = (t.categoryDeleted || '🗑️ تم حذف الفئة "{cat}"').replace('{cat}', cat);
-                    showToast(msg2, 'success');
-                } catch (e) {
-                    showToast('❌ فشل حذف الفئة: ' + e.message, 'error');
-                }
-            } else {
-                categories = categories.filter(c => c !== cat);
-                syncedCategories.delete(cat);
-                localStorage.setItem('categories', JSON.stringify(categories));
-                updateCategorySelects();
-                updateCategoryFilters();
-                renderCategoryManager();
-                const msg2 = (t.categoryDeleted || '🗑️ تم حذف الفئة "{cat}"').replace('{cat}', cat);
-                showToast(msg2 + ' (محلياً)', 'success');
-            }
-            saveToStorage();
-            fullUpdateUI();
-        }
-
-        // ===================== دمج بيانات Firebase =====================
+        // تُبنى المصفوفات/الكائن المحلي من نتائج المجموعات، وتُحدَّث حالة المزامنة تبعًا لذلك
         function mergeMaterialsSnapshot(snap) {
             const newInventory = {};
             snap.forEach(d => {
@@ -1446,10 +1101,11 @@
             syncedBorrowIds = new Set(list.map(h => String(h.id)));
         }
 
+        // ترحيل تلقائي لمرة واحدة: إن وُجدت بيانات بالبنية القديمة (مستند واحد) ولم تُنقل بعد
         async function migrateOldDataIfNeeded() {
             try {
                 const matSnap = await getDocs(collection(db, 'wh_materials'));
-                if (!matSnap.empty) return false;
+                if (!matSnap.empty) return false; // تم الترحيل مسبقًا أو توجد بيانات بالفعل
                 const oldSnap = await getDoc(doc(db, "warehouse", "data"));
                 if (!oldSnap.exists()) return false;
                 const oldData = oldSnap.data();
@@ -1477,7 +1133,7 @@
                     chunk.forEach(op => batch.set(op.ref, op.data));
                     await batch.commit();
                 }
-                showToast('✅ تم ترحيل بيانات المخزون إلى البنية الجديدة.', 'success', 6000);
+                showToast('✅ تم ترحيل بيانات المخزون إلى البنية الجديدة (بدون Storage).', 'success', 6000);
                 return true;
             } catch (e) {
                 console.error('Migration error:', e);
@@ -1485,6 +1141,7 @@
             }
         }
 
+        // ===================== تحميل البيانات من Firebase =====================
         async function loadDataFromFirebase() {
             if (!cloudEnabled || !db) return false;
             try {
@@ -1495,6 +1152,7 @@
                     getDocs(collection(db, 'wh_borrowHistory'))
                 ]);
                 if (matSnap.empty && histSnap.empty && borrowSnap.empty) {
+                    // مشروع جديد بالكامل: نبدأ بالبيانات الافتراضية ونرفعها
                     inventory = JSON.parse(JSON.stringify(defaultOffice));
                     history = [];
                     borrowHistory = [];
@@ -1581,145 +1239,48 @@
             document.getElementById('borrowedCount').textContent = totalBorrowed;
         }
 
-        // دالة البحث المُحسَّنة (بداية الكلمات)
-        function filterItems(items, search, category) {
-            const searchLower = search.toLowerCase().trim();
-            return items.filter(([key, item]) => {
-                const matchCategory = !category || item.category === category;
-                if (!searchLower) return matchCategory;
-                const searchable = ((item.ar || '') + ' ' + (item.fr || '') + ' ' + (item.en || '') + ' ' + key).toLowerCase();
-                const words = searchable.split(/\s+/);
-                const matchSearch = words.some(word => word.startsWith(searchLower));
-                return matchSearch && matchCategory;
-            });
-        }
-
         function updateDashboard() {
             const t = translations[currentLang] || translations.ar;
             const grid = document.getElementById('dashboardGrid');
-            const search = document.getElementById('dashboardSearch').value;
-            const category = document.getElementById('dashboardCategoryFilter').value;
-            const filtered = filterItems(Object.entries(inventory), search, category);
-            const resultCount = document.getElementById('dashboardResultCount');
-            resultCount.textContent = filtered.length + ' ' + (filtered.length === 1 ? 'مادة' : 'مواد');
-
             grid.innerHTML = '';
             const frag = document.createDocumentFragment();
-            if (filtered.length === 0) {
-                const msg = document.createElement('p');
-                msg.style.cssText = 'text-align:center;color:#999;grid-column:1/-1;padding:1rem;';
-                msg.textContent = t.noResults || 'لا توجد نتائج';
-                frag.appendChild(msg);
-            } else {
-                filtered.forEach(([name, item]) => {
-                    const div = document.createElement('div');
-                    div.className = 'inventory-item';
-                    div.style.borderColor = getColor(item.qty);
-                    div.innerHTML = getImgHtml(item) +
-                        '<div class="inventory-item-name">' + getName(item, name) + '</div>' +
-                        '<div class="inventory-item-qty" style="color:' + getColor(item.qty) + '">' + item.qty + '</div>' +
-                        '<div class="inventory-item-status">' + getStatus(item.qty) + '</div>' +
-                        (item.borrowed > 0 ? '<div class="inventory-item-borrowed">' + t.borrowedLabel + ': ' + item.borrowed + '</div>' : '');
-                    frag.appendChild(div);
-                });
-            }
+            Object.entries(inventory).forEach(([name, item]) => {
+                const div = document.createElement('div');
+                div.className = 'inventory-item';
+                div.style.borderColor = getColor(item.qty);
+                div.innerHTML = getImgHtml(item) +
+                    '<div class="inventory-item-name">' + getName(item, name) + '</div>' +
+                    '<div class="inventory-item-qty" style="color:' + getColor(item.qty) + '">' + item.qty + '</div>' +
+                    '<div class="inventory-item-status">' + getStatus(item.qty) + '</div>' +
+                    (item.borrowed > 0 ? '<div class="inventory-item-borrowed">' + t.borrowedLabel + ': ' + item.borrowed + '</div>' : '');
+                frag.appendChild(div);
+            });
             grid.appendChild(frag);
         }
 
         function updateInventoryTable() {
             const tbody = document.getElementById('inventoryTable');
-            const search = document.getElementById('inventorySearch').value;
-            const category = document.getElementById('inventoryCategoryFilter').value;
-            const filtered = filterItems(Object.entries(inventory), search, category);
-            const resultCount = document.getElementById('inventoryResultCount');
-            resultCount.textContent = filtered.length + ' ' + (filtered.length === 1 ? 'مادة' : 'مواد');
-
             tbody.innerHTML = '';
             const frag = document.createDocumentFragment();
-            if (filtered.length === 0) {
+            Object.entries(inventory).forEach(([name, item], idx) => {
                 const row = document.createElement('tr');
-                row.innerHTML = '<td colspan="4" style="text-align:center;color:#999;padding:1rem;">' + (translations[currentLang].noResults || 'لا توجد نتائج') + '</td>';
+                row.style.background = idx % 2 === 0 ? '#FAFAFA' : 'white';
+                row.innerHTML = '<td>' + getName(item, name) + '</td><td style="text-align:center;font-weight:bold;color:' + getColor(item.qty) + '">' + item.qty + '</td><td style="text-align:center;font-size:12px">' + getStatus(item.qty) + '</td><td style="text-align:center;color:#F59E0B">' + (item.borrowed > 0 ? item.borrowed : '-') + '</td>';
                 frag.appendChild(row);
-            } else {
-                filtered.forEach(([name, item], idx) => {
-                    const row = document.createElement('tr');
-                    row.style.background = idx % 2 === 0 ? '#FAFAFA' : 'white';
-                    row.innerHTML = '<td>' + getName(item, name) + '</td><td style="text-align:center;font-weight:bold;color:' + getColor(item.qty) + '">' + item.qty + '</td><td style="text-align:center;font-size:12px">' + getStatus(item.qty) + '</td><td style="text-align:center;color:#F59E0B">' + (item.borrowed > 0 ? item.borrowed : '-') + '</td>';
-                    frag.appendChild(row);
-                });
-            }
+            });
             tbody.appendChild(frag);
         }
 
-        // ===================== Pagination =====================
-        function renderPagination(containerId, totalItems, currentPage, itemsPerPage, callback) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-            if (totalPages <= 1) { container.innerHTML = ''; return; }
-            let html = '<button onclick="changePage(\'' + containerId + '\',' + (currentPage - 1) + ')" ' + (currentPage <= 1 ? 'disabled' : '') + '>‹</button>';
-            let startPage = Math.max(1, currentPage - 2);
-            let endPage = Math.min(totalPages, currentPage + 2);
-            if (startPage > 1) html += '<button onclick="changePage(\'' + containerId + '\',1)">1</button>' + (startPage > 2 ? '…' : '');
-            for (let i = startPage; i <= endPage; i++) {
-                html += '<button onclick="changePage(\'' + containerId + '\',' + i + ')" class="' + (i === currentPage ? 'active' : '') + '">' + i + '</button>';
-            }
-            if (endPage < totalPages) html += (endPage < totalPages - 1 ? '…' : '') + '<button onclick="changePage(\'' + containerId + '\',' + totalPages + ')">' + totalPages + '</button>';
-            html += '<button onclick="changePage(\'' + containerId + '\',' + (currentPage + 1) + ')" ' + (currentPage >= totalPages ? 'disabled' : '') + '>›</button>';
-            container.innerHTML = html;
-            container.dataset.currentPage = currentPage;
-            container.dataset.totalPages = totalPages;
-        }
-
-        window.changePage = function(containerId, newPage) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            const totalPages = parseInt(container.dataset.totalPages) || 1;
-            if (newPage < 1 || newPage > totalPages) return;
-            const currentPage = parseInt(container.dataset.currentPage) || 1;
-            if (newPage === currentPage) return;
-            container.dataset.currentPage = newPage;
-            if (containerId === 'historyPagination') {
-                currentHistoryPage = newPage;
-                updateHistoryList();
-            } else if (containerId === 'borrowPagination') {
-                currentBorrowPage = newPage;
-                updateBorrowHistoryList();
-            }
-        };
-
-        function getPaginatedData(list, containerId) {
-            const container = document.getElementById(containerId);
-            const page = parseInt(container?.dataset.currentPage) || 1;
-            const perPage = 50;
-            const start = (page - 1) * perPage;
-            const end = start + perPage;
-            return list.slice(start, end);
-        }
-
-        function updateHistoryList() {
+        function updateHistory() {
             const t = translations[currentLang] || translations.ar;
             const list = document.getElementById('historyList');
-            const total = history.length;
-            const containerId = 'historyPagination';
-            const perPage = 50;
-            const page = parseInt(document.getElementById(containerId)?.dataset.currentPage) || currentHistoryPage;
-            const totalPages = Math.ceil(total / perPage) || 1;
-            const safePage = Math.min(Math.max(page, 1), totalPages);
-            if (safePage !== page) {
-                document.getElementById(containerId).dataset.currentPage = safePage;
-                currentHistoryPage = safePage;
-            }
-            const paginated = getPaginatedData(history, containerId);
-
             list.innerHTML = '';
-            if (total === 0) {
+            if (history.length === 0) {
                 list.innerHTML = '<p style="text-align:center;color:#999;font-size:14px;">' + t.noHistory + '</p>';
-                renderPagination(containerId, 0, 1, perPage, updateHistoryList);
                 return;
             }
             const frag = document.createDocumentFragment();
-            paginated.forEach(entry => {
+            [...history].reverse().forEach(entry => {
                 const div = document.createElement('div');
                 const typeClass = entry.type || 'out';
                 div.className = 'history-item ' + (typeClass === 'in' ? 'in' : (typeClass === 'borrow' ? 'borrow' : (typeClass === 'return' ? 'return' : 'out')));
@@ -1729,42 +1290,6 @@
                 frag.appendChild(div);
             });
             list.appendChild(frag);
-            renderPagination(containerId, total, safePage, perPage, updateHistoryList);
-        }
-
-        function updateBorrowHistoryList() {
-            const t = translations[currentLang] || translations.ar;
-            const list = document.getElementById('borrowHistoryList');
-            const total = borrowHistory.length;
-            const containerId = 'borrowPagination';
-            const perPage = 50;
-            const page = parseInt(document.getElementById(containerId)?.dataset.currentPage) || currentBorrowPage;
-            const totalPages = Math.ceil(total / perPage) || 1;
-            const safePage = Math.min(Math.max(page, 1), totalPages);
-            if (safePage !== page) {
-                document.getElementById(containerId).dataset.currentPage = safePage;
-                currentBorrowPage = safePage;
-            }
-            const paginated = getPaginatedData(borrowHistory, containerId);
-
-            list.innerHTML = '';
-            if (total === 0) {
-                list.innerHTML = '<p style="text-align:center;color:#999;font-size:14px;">' + t.noBorrowHistory + '</p>';
-                renderPagination(containerId, 0, 1, perPage, updateBorrowHistoryList);
-                return;
-            }
-            const frag = document.createDocumentFragment();
-            paginated.forEach(entry => {
-                const div = document.createElement('div');
-                const typeClass = entry.type || 'borrow';
-                div.className = 'history-item ' + (typeClass === 'borrow' ? 'borrow' : 'return');
-                const typeIcon = typeClass === 'borrow' ? '🚨' : '⬅️';
-                const typeLabel = typeClass === 'borrow' ? 'استعارة' : 'إرجاع';
-                div.innerHTML = '<div class="history-item-left"><span class="section-badge badge-office" style="font-size:10px">Office</span><div class="history-item-name">' + entry.material + '</div><div class="history-item-employee">👤 ' + entry.employee + (entry.note ? ' | 📑 ' + entry.note : '') + '</div></div><div class="history-item-right"><div class="history-item-qty" style="color:' + (typeClass === 'borrow' ? '#F59E0B' : '#009FE3') + '">' + entry.qty + ' ' + typeIcon + ' ' + typeLabel + '</div><div class="history-item-date">📮 ' + entry.date + '</div></div>';
-                frag.appendChild(div);
-            });
-            list.appendChild(frag);
-            renderPagination(containerId, total, safePage, perPage, updateBorrowHistoryList);
         }
 
         function updateEmployeeStats() {
@@ -1801,6 +1326,27 @@
             tbody.appendChild(frag);
         }
 
+        function updateBorrowHistory() {
+            const t = translations[currentLang] || translations.ar;
+            const list = document.getElementById('borrowHistoryList');
+            list.innerHTML = '';
+            if (borrowHistory.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;font-size:14px;">' + t.noBorrowHistory + '</p>';
+                return;
+            }
+            const frag = document.createDocumentFragment();
+            [...borrowHistory].reverse().forEach(entry => {
+                const div = document.createElement('div');
+                const typeClass = entry.type || 'borrow';
+                div.className = 'history-item ' + (typeClass === 'borrow' ? 'borrow' : 'return');
+                const typeIcon = typeClass === 'borrow' ? '🚨' : '⬅️';
+                const typeLabel = typeClass === 'borrow' ? 'استعارة' : 'إرجاع';
+                div.innerHTML = '<div class="history-item-left"><span class="section-badge badge-office" style="font-size:10px">Office</span><div class="history-item-name">' + entry.material + '</div><div class="history-item-employee">👤 ' + entry.employee + (entry.note ? ' | 📑 ' + entry.note : '') + '</div></div><div class="history-item-right"><div class="history-item-qty" style="color:' + (typeClass === 'borrow' ? '#F59E0B' : '#009FE3') + '">' + entry.qty + ' ' + typeIcon + ' ' + typeLabel + '</div><div class="history-item-date">📮 ' + entry.date + '</div></div>';
+                frag.appendChild(div);
+            });
+            list.appendChild(frag);
+        }
+
         function updateManageList() {
             const t = translations[currentLang] || translations.ar;
             const list = document.getElementById('officeMaterialsList');
@@ -1829,7 +1375,6 @@
                         '<input type="text" value="' + (item.ar || name) + '" readonly style="background:#f0f0f0;">' +
                         '<input type="text" value="' + (item.fr || name) + '" readonly style="background:#f0f0f0;">' +
                         '<input type="text" value="' + (item.en || name) + '" readonly style="background:#f0f0f0;">' +
-                        '<input type="text" value="' + (item.category || 'مكتبية') + '" readonly style="background:#f0f0f0;width:60px;">' +
                         '<input type="text" value="' + (item.unit || '') + '" readonly style="background:#f0f0f0;width:60px;">';
                     
                     div.appendChild(editBtn);
@@ -1844,7 +1389,6 @@
                         '<input type="text" value="' + (item.ar || name) + '" readonly style="background:#f0f0f0;">' +
                         '<input type="text" value="' + (item.fr || name) + '" readonly style="background:#f0f0f0;">' +
                         '<input type="text" value="' + (item.en || name) + '" readonly style="background:#f0f0f0;">' +
-                        '<input type="text" value="' + (item.category || 'مكتبية') + '" readonly style="background:#f0f0f0;width:60px;">' +
                         '<input type="text" value="' + (item.unit || '') + '" readonly style="background:#f0f0f0;width:60px;">' +
                         '<span style="color:#999;font-size:12px;">🔒 للمشرفين فقط</span>';
                     frag.appendChild(div);
@@ -1852,6 +1396,7 @@
             }
             list.appendChild(frag);
             
+            // مستمعات الأحداث باستخدام currentTarget
             document.querySelectorAll('[data-action="edit"]').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     openEditModal(e.currentTarget.dataset.key, e.currentTarget.dataset.section);
@@ -1890,14 +1435,11 @@
                 requestAnimationFrame(() => {
                     setTimeout(() => {
                         updateStats();
-                        updateCategorySelects();
-                        updateCategoryFilters();
-                        renderCategoryManager();
                         updateDashboard();
                         updateInventoryTable();
-                        updateHistoryList();
+                        updateHistory();
                         updateEmployeeStats();
-                        updateBorrowHistoryList();
+                        updateBorrowHistory();
                         updateManageList();
                         checkLowStock();
                     }, 10);
@@ -1905,14 +1447,11 @@
             } else {
                 setTimeout(() => {
                     updateStats();
-                    updateCategorySelects();
-                    updateCategoryFilters();
-                    renderCategoryManager();
                     updateDashboard();
                     updateInventoryTable();
-                    updateHistoryList();
+                    updateHistory();
                     updateEmployeeStats();
-                    updateBorrowHistoryList();
+                    updateBorrowHistory();
                     updateManageList();
                     checkLowStock();
                 }, 50);
@@ -1928,20 +1467,10 @@
         }
 
         // ===================== Helpers =====================
-        function isDuplicateName(ar, fr, en, excludeKey = null) {
+        function isDuplicateName(name, excludeKey = null) {
             const keys = Object.keys(inventory);
-            const arLower = ar ? ar.toLowerCase() : '';
-            const frLower = fr ? fr.toLowerCase() : '';
-            const enLower = en ? en.toLowerCase() : '';
-            return keys.some(k => {
-                if (k === excludeKey) return false;
-                const item = inventory[k];
-                const matchAr = arLower && item.ar && item.ar.toLowerCase() === arLower;
-                const matchFr = frLower && item.fr && item.fr.toLowerCase() === frLower;
-                const matchEn = enLower && item.en && item.en.toLowerCase() === enLower;
-                const matchKey = k.toLowerCase() === arLower || k.toLowerCase() === frLower || k.toLowerCase() === enLower;
-                return matchAr || matchFr || matchEn || matchKey;
-            });
+            if (excludeKey) return keys.some(k => k !== excludeKey && k.toLowerCase() === name.toLowerCase());
+            return keys.some(k => k.toLowerCase() === name.toLowerCase());
         }
 
         function updateMaterialOptions() {
@@ -1976,24 +1505,6 @@
             document.getElementById(tabName).classList.add('active');
             const btn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
             if (btn) btn.classList.add('active');
-            if (tabName === 'history') {
-                const pag = document.getElementById('historyPagination');
-                if (pag) {
-                    pag.dataset.currentPage = currentHistoryPage;
-                    updateHistoryList();
-                }
-            } else if (tabName === 'borrow') {
-                const pag = document.getElementById('borrowPagination');
-                if (pag) {
-                    pag.dataset.currentPage = currentBorrowPage;
-                    updateBorrowHistoryList();
-                }
-            }
-            if (tabName === 'dashboard' || tabName === 'inventory') {
-                updateCategoryFilters();
-                if (tabName === 'dashboard') updateDashboard();
-                else updateInventoryTable();
-            }
         };
 
         window.setType = function(type) {
@@ -2076,7 +1587,11 @@
         };
 
         // ===================== Material Management =====================
-        function compressImage(file, maxDim = 200, quality = 0.6) {
+        // كل مادة الآن مستند مستقل بذاته في Firestore (وليس جزءاً من مستند ضخم واحد)،
+        // لذا يمكن تخزين الصورة كـ base64 داخل مستند المادة بأمان تام (بعيد جداً عن حد 1MB
+        // لكل مستند)، دون الحاجة لـ Firebase Storage (الذي يتطلب الآن بطاقة ائتمان).
+        // نضغط الصورة أولاً (تصغير الأبعاد + JPEG) لتقليل حجمها وتسريع الرفع.
+        function compressImage(file, maxDim = 300, quality = 0.72) {
             return new Promise((resolve, reject) => {
                 if (!file || !file.type || !file.type.startsWith('image/')) {
                     reject(new Error('الملف ليس صورة صالحة'));
@@ -2149,16 +1664,12 @@
             const fr = document.getElementById('newOfficeFr').value.trim();
             const en = document.getElementById('newOfficeEn').value.trim();
             const unit = document.getElementById('newOfficeUnit').value.trim() || 'قطعة';
-            const category = document.getElementById('newOfficeCategory').value || 'مكتبية';
             const previewImg = document.getElementById('previewOffice');
             const imgData = (previewImg.style.display !== 'none' && previewImg.src) ? previewImg.src : '';
             if (!ar && !fr && !en) { showToast('⚠️ أدخل الاسم.', 'error'); return; }
             const key = ar || fr || en;
-            if (isDuplicateName(ar, fr, en)) {
-                showToast(`⚠️ اسم "${key}" مكرر (بالعربية أو الفرنسية أو الإنجليزية).`, 'error');
-                return;
-            }
-            inventory[key] = { qty: 0, unit, borrowed: 0, section: 'office', category, ar: ar || key, fr: fr || key, en: en || key, img: imgData };
+            if (isDuplicateName(key)) { showToast(`⚠️ "${key}" موجودة مسبقاً.`, 'error'); return; }
+            inventory[key] = { qty: 0, unit, borrowed: 0, section: 'office', ar: ar || key, fr: fr || key, en: en || key, img: imgData };
             saveToStorage();
             updateMaterialOptions();
             updateBorrowMaterialOptions();
@@ -2184,11 +1695,6 @@
             document.getElementById('editFr').value = data.fr || key;
             document.getElementById('editEn').value = data.en || key;
             document.getElementById('editUnit').value = data.unit || '';
-            updateCategorySelects();
-            const categorySelect = document.getElementById('editCategory');
-            if (categorySelect) {
-                categorySelect.value = data.category || 'مكتبية';
-            }
             const preview = document.getElementById('editPreview');
             if (data.img) {
                 preview.src = data.img;
@@ -2203,6 +1709,7 @@
             document.getElementById('editModal').classList.remove('active');
         };
 
+        // ===================== تعديل المادة مع منع المستمع =====================
         window.saveEdit = async function() {
             if (!isAdmin) return;
             if (isSyncing) { showToast('⏳ عملية أخرى قيد التنفيذ...', 'warning'); return; }
@@ -2215,7 +1722,6 @@
                 const fr = document.getElementById('editFr').value.trim();
                 const en = document.getElementById('editEn').value.trim();
                 const unit = document.getElementById('editUnit').value.trim();
-                const category = document.getElementById('editCategory').value || 'مكتبية';
                 const previewImg = document.getElementById('editPreview');
                 const newImg = (previewImg.style.display !== 'none' && previewImg.src && !previewImg.src.includes(window.location.href)) ? previewImg.src : undefined;
 
@@ -2227,14 +1733,15 @@
 
                 const newKey = ar || fr || en || oldKey;
 
-                if (newKey !== oldKey && isDuplicateName(ar, fr, en, oldKey)) {
-                    showToast(`⚠️ "${newKey}" مكرر (بالعربية أو الفرنسية أو الإنجليزية).`, 'error');
+                if (newKey !== oldKey && isDuplicateName(newKey, oldKey)) {
+                    showToast(`⚠️ "${newKey}" موجودة مسبقاً.`, 'error');
                     isSyncing = false;
                     return;
                 }
 
+                // تعديل البيانات محلياً
                 if (newKey !== oldKey) {
-                    inventory[newKey] = { ...inventory[oldKey], ar, fr, en, unit, category };
+                    inventory[newKey] = { ...inventory[oldKey], ar, fr, en, unit };
                     if (newImg !== undefined) inventory[newKey].img = newImg;
                     delete inventory[oldKey];
                     history.forEach(h => { if (h.material === oldKey) h.material = newKey; });
@@ -2244,7 +1751,6 @@
                     inventory[oldKey].fr = fr;
                     inventory[oldKey].en = en;
                     inventory[oldKey].unit = unit;
-                    inventory[oldKey].category = category;
                     if (newImg !== undefined) inventory[oldKey].img = newImg;
                 }
 
@@ -2269,6 +1775,7 @@
             }
         };
 
+        // ===================== حذف المادة مع منع المستمع =====================
         window.deleteMaterial = async function(key, section) {
             if (!isAdmin) {
                 showToast('⚠️ فقط المشرفون.', 'error');
@@ -2286,6 +1793,7 @@
             isSyncing = true;
             updateSyncStatus('syncing', '#009FE3');
             try {
+                // حذف محلي
                 delete inventory[key];
                 history = history.filter(h => h.material !== key);
                 borrowHistory = borrowHistory.filter(h => h.material !== key);
@@ -2295,6 +1803,7 @@
                 updateBorrowMaterialOptions();
                 fullUpdateUI();
 
+                // رفع إلى السحابة (يحذف مستند المادة + مستندات عملياتها المرتبطة تلقائياً بالمقارنة)
                 await syncToCloud();
 
                 showToast(`🗑️ تم حذف "${key}" بنجاح.`, 'success');
@@ -2311,7 +1820,7 @@
             }
         };
 
-        // ===================== Excel Export / Import =====================
+        // ===================== Excel Export / Import (محمّلة عند الطلب فقط) =====================
         let sheetJsLoadingPromise = null;
         function loadSheetJS() {
             if (window.XLSX) return Promise.resolve();
@@ -2338,18 +1847,13 @@
                         'بالفرنسية': it.fr || '',
                         'بالإنجليزية': it.en || '',
                         'الوحدة': it.unit || '',
-                        'الفئة': it.category || 'مكتبية',
                         'الكمية': it.qty || 0,
-                        'المستعار': it.borrowed || 0,
-                        'الصورة (base64)': it.img || ''
+                        'المستعار': it.borrowed || 0
                     };
                 });
                 const ws = XLSX.utils.json_to_sheet(rows);
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, 'المواد');
-                const catRows = categories.map(c => ({ 'الفئة': c }));
-                const wsCats = XLSX.utils.json_to_sheet(catRows);
-                XLSX.utils.book_append_sheet(wb, wsCats, 'الفئات');
                 XLSX.writeFile(wb, 'warehouse-materials-' + new Date().toISOString().split('T')[0] + '.xlsx');
                 showToast('✅ تم تصدير ملف Excel.', 'success');
             } catch (err) {
@@ -2381,46 +1885,25 @@
                         const fr = String(row['بالفرنسية'] ?? row['fr'] ?? '').trim();
                         const en = String(row['بالإنجليزية'] ?? row['en'] ?? '').trim();
                         const unit = String(row['الوحدة'] ?? row['unit'] ?? 'قطعة').trim() || 'قطعة';
-                        const category = String(row['الفئة'] ?? row['category'] ?? 'مكتبية').trim() || 'مكتبية';
                         const qty = Number(row['الكمية'] ?? row['qty'] ?? 0) || 0;
                         const borrowed = Number(row['المستعار'] ?? row['borrowed'] ?? 0) || 0;
-                        const img = String(row['الصورة (base64)'] ?? row['img'] ?? '').trim();
                         const explicitKey = String(row['المفتاح/Key'] ?? row['key'] ?? '').trim();
                         const key = explicitKey || ar || fr || en;
                         if (!key) { return; }
 
                         if (inventory[key]) {
-                            const oldImg = inventory[key].img || '';
-                            inventory[key] = { ...inventory[key], qty, borrowed, unit, category, ar, fr, en };
-                            if (img && img.length > 100) inventory[key].img = img;
-                            else if (oldImg) inventory[key].img = oldImg;
+                            inventory[key].qty = qty;
+                            inventory[key].borrowed = borrowed;
+                            inventory[key].unit = unit;
+                            if (ar) inventory[key].ar = ar;
+                            if (fr) inventory[key].fr = fr;
+                            if (en) inventory[key].en = en;
                             updated++;
                         } else {
-                            inventory[key] = { qty, unit, borrowed, section: 'office', category, ar: ar || key, fr: fr || key, en: en || key, img: img || '' };
+                            inventory[key] = { qty, unit, borrowed, section: 'office', ar: ar || key, fr: fr || key, en: en || key, img: '' };
                             added++;
                         }
                     });
-
-                    if (wb.SheetNames.includes('الفئات')) {
-                        const catSheet = wb.Sheets['الفئات'];
-                        const catRows = XLSX.utils.sheet_to_json(catSheet, { defval: '' });
-                        const newCats = catRows.map(r => String(r['الفئة'] || '').trim()).filter(c => c);
-                        if (newCats.length > 0) {
-                            const allCats = new Set([...categories, ...newCats]);
-                            categories = Array.from(allCats).sort();
-                            if (cloudEnabled && db) {
-                                const batch = writeBatch(db);
-                                categories.forEach(c => {
-                                    const ref = doc(db, 'wh_categories', c);
-                                    batch.set(ref, { name: c });
-                                });
-                                await batch.commit();
-                            } else {
-                                localStorage.setItem('categories', JSON.stringify(categories));
-                            }
-                            syncedCategories = new Set(categories);
-                        }
-                    }
 
                     saveToStorage();
                     updateMaterialOptions();
@@ -2439,7 +1922,7 @@
 
         // ===================== Export / Import =====================
         window.exportData = function() {
-            const data = { inventory, history, borrowHistory, categories, exportedAt: new Date().toISOString(), version: '1.0' };
+            const data = { inventory, history, borrowHistory, exportedAt: new Date().toISOString(), version: '1.0' };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -2466,19 +1949,6 @@
                     if (data.inventory) inventory = data.inventory;
                     if (data.history) history = data.history;
                     if (data.borrowHistory) borrowHistory = data.borrowHistory;
-                    if (data.categories) {
-                        categories = data.categories;
-                        if (cloudEnabled && db) {
-                            const batch = writeBatch(db);
-                            categories.forEach(c => {
-                                const ref = doc(db, 'wh_categories', c);
-                                batch.set(ref, { name: c });
-                            });
-                            await batch.commit();
-                        }
-                        localStorage.setItem('categories', JSON.stringify(categories));
-                        syncedCategories = new Set(categories);
-                    }
                     saveToStorage();
                     if (cloudEnabled) await syncToCloud();
                     updateMaterialOptions();
@@ -2512,11 +1982,6 @@
                 if (borrowBtn) {
                     borrowBtn.textContent = currentBorrowType === 'borrow' ? (t.btnBorrowSubmit || '🚨 تسجيل استعارة') : (t.btnReturnSubmit || '⬅️ تسجيل إرجاع');
                 }
-                document.querySelectorAll('#dashboardSearch, #inventorySearch').forEach(el => {
-                    el.placeholder = t.searchPlaceholder || 'ابحث بالاسم أو الفئة...';
-                });
-                updateCategoryFilters();
-                renderCategoryManager();
             }
             fullUpdateUI();
         };
@@ -2542,7 +2007,6 @@
 
         // ===================== Load Data =====================
         async function loadData() {
-            await loadCategoriesFromFirebase();
             const loaded = await loadDataFromFirebase();
             if (!loaded) {
                 const saved = localStorage.getItem('inventory');
@@ -2576,16 +2040,12 @@
         // ===================== Init =====================
         async function initApp() {
             checkAuth();
-            
-            const loadPromise = loadData();
-            listenCategories();
+            await loadData();
             updateTime();
             setInterval(updateTime, 1000);
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('date').value = today;
             document.getElementById('borrowDate').value = today;
-
-            await loadPromise;
 
             if (cloudEnabled && db) {
                 onSnapshot(collection(db, 'wh_materials'), (snap) => {
@@ -2607,8 +2067,7 @@
                     if (snap.metadata.hasPendingWrites) return;
                     mergeHistorySnapshot(snap);
                     saveToStorage();
-                    updateHistoryList();
-                    updateEmployeeStats();
+                    fullUpdateUI();
                 }, (err) => {
                     console.error("History snapshot error:", err);
                 });
@@ -2618,7 +2077,7 @@
                     if (snap.metadata.hasPendingWrites) return;
                     mergeBorrowSnapshot(snap);
                     saveToStorage();
-                    updateBorrowHistoryList();
+                    fullUpdateUI();
                 }, (err) => {
                     console.error("BorrowHistory snapshot error:", err);
                 });
